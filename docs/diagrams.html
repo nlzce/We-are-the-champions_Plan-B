@@ -140,6 +140,7 @@ flowchart LR
       UC03(["UC03: Create / View Trip Room<br/>(Allowed to be empty initially)"]):::usecase
       UC04(["UC04: Join via Share Link<br/>(No prior friending required)"]):::usecase
       UC05(["UC05: Invite from Friends List"]):::usecase
+      UC18(["UC18: Real-time Team Group Chat<br/>(Member chat, place cards, live alerts)"]):::usecase
     end
 
     subgraph UC_Prefs["3. Preferences & Display Map"]
@@ -180,6 +181,7 @@ flowchart LR
   Traveler --- UC14
   Traveler --- UC16
   Traveler --- UC17
+  Traveler --- UC18
 
   Owner --- UC10
 
@@ -254,13 +256,14 @@ flowchart TD
 
     <div class="card">
       <h2>4. User Flow</h2>
-      <p>13-screen end-to-end user experience flow showing prerequisite checks, Plan vs. Trip mode, and the persistent 5-tab bottom navigation bar.</p>
+      <p>14-screen end-to-end user experience flow showing prerequisite checks, Plan vs. Trip mode, and the persistent 6-tab bottom navigation bar (Trips, Map, Plan, Money, You, Chat).</p>
       <div class="mermaid">
 flowchart TD
   S00["00 Splash<br/>Icon & Slogan"] --> S01["01 Login / Register<br/>No seed users"]
   S01 --> S02["02 Trips<br/>Room list; allowed empty"]
   S02 --> S03["03 Trip Home<br/>Switch Plan / Trip mode"]
   S03 --> S11["11 Invite<br/>Copy link or friend invite"]
+  S03 --> S13["13 Group Chat<br/>Real-time member chat & alerts"]
   S03 --> S04["04 Preference Form<br/>Dates, cap, pace, deal-breakers, hidden toggle"]
   S04 --> S05["05 Map<br/>Photon fuzzy search + tap map"]
   S05 --> AlignChk{"Destination confirmed &<br/>places added?"}
@@ -316,6 +319,7 @@ mindmap
       Room lifecycle
         Solo trip room
         Group collaboration room
+        Real-time team group chat
         Join by share link without friending
         Invite from friends list
         Trip list allowed empty initially
@@ -384,13 +388,14 @@ mindmap
     PWA Interface and Screens
       PWA mobile architecture
         390px mobile phone width
-        Five bottom navigation tabs
+        Six bottom navigation tabs
           Trips tab
           Map tab
           Plan tab
           Money tab
           You tab
-      Thirteen core screens
+          Chat tab
+      Fourteen core screens
         00 Splash brand icon and slogan
         01 Login and Register
         02 Trips room list
@@ -404,6 +409,7 @@ mindmap
         10 Profile defaults and dietary
         11 Invite via link or friend
         12 Replan single disrupted slot
+        13 Group Chat real-time messaging
     System Tech Stack
       Frontend Nuxt 3 and Vue 3
       Backend Nitro and Drizzle ORM

@@ -78,6 +78,7 @@ flowchart LR
       UC03(["UC03: Create / View Trip Room<br/>(Allowed to be empty initially)"]):::usecase
       UC04(["UC04: Join via Share Link<br/>(No prior friending required)"]):::usecase
       UC05(["UC05: Invite from Friends List"]):::usecase
+      UC18(["UC18: Real-time Team Group Chat<br/>(Member chat, place cards, live alerts)"]):::usecase
     end
 
     subgraph UC_Prefs["3. Preferences & Display Map"]
@@ -118,6 +119,7 @@ flowchart LR
   Traveler --- UC14
   Traveler --- UC16
   Traveler --- UC17
+  Traveler --- UC18
 
   Owner --- UC10
 
@@ -148,6 +150,7 @@ flowchart LR
 | **UC15** | Replan Single Slot | Gemini Agent | Rewrites *only* the affected time block using remaining valid place IDs. Locked stays and flights remain fixed. |
 | **UC16** | Log Itemized Expense | Traveler | Logs actual spend tied directly to an itinerary item. |
 | **UC17** | Settle Who-Owes-Whom | Traveler | Computes debt graph and splits without dynamic ticket lookup. |
+| **UC18** | Team Group Chat | Traveler | Real-time chat powered by Supabase Realtime; share place cards, discuss plans, and receive live system disruption notices. |
 
 ---
 
@@ -225,7 +228,7 @@ flowchart TD
 
 ## 4. User Flow
 
-**Logic:** Strict sequential flow across all 13 screens. Users cannot trigger Gemini generation until destination is confirmed and real places exist.
+**Logic:** Strict sequential flow across all 14 screens. Users cannot trigger Gemini generation until destination is confirmed and real places exist.
 
 ```mermaid
 flowchart TD
@@ -233,6 +236,7 @@ flowchart TD
   S01 --> S02["02 Trips<br/>Room list; allowed empty"]
   S02 --> S03["03 Trip Home<br/>Switch Plan / Trip mode"]
   S03 --> S11["11 Invite<br/>Copy link or friend invite"]
+  S03 --> S13["13 Group Chat<br/>Real-time member chat & alerts"]
   S03 --> S04["04 Preference Form<br/>Dates, cap, pace, deal-breakers, hidden toggle"]
   S04 --> S05["05 Map<br/>Photon fuzzy search + tap map"]
   S05 --> AlignChk{"Destination confirmed &<br/>places added?"}
@@ -247,7 +251,7 @@ flowchart TD
   S03 --> S10["10 Profile<br/>Default pace, dietary, friends"]
 ```
 
-Bottom navigation tabs (always accessible): **Trips · Map · Plan · Money · You**
+Bottom navigation tabs (always accessible): **Trips · Map · Plan · Money · You · Chat** (Chat positioned to the right of You)
 
 ---
 
@@ -314,6 +318,7 @@ mindmap
       Room lifecycle
         Solo trip room
         Group collaboration room
+        Real-time team group chat
         Join by share link without friending
         Invite from friends list
         Trip list allowed empty initially
@@ -382,13 +387,14 @@ mindmap
     PWA Interface and Screens
       PWA mobile architecture
         390px mobile phone width
-        Five bottom navigation tabs
+        Six bottom navigation tabs
           Trips tab
           Map tab
           Plan tab
           Money tab
           You tab
-      Thirteen core screens
+          Chat tab
+      Fourteen core screens
         00 Splash brand icon and slogan
         01 Login and Register
         02 Trips room list
@@ -402,6 +408,7 @@ mindmap
         10 Profile defaults and dietary
         11 Invite via link or friend
         12 Replan single disrupted slot
+        13 Group Chat real-time messaging
     System Tech Stack
       Frontend Nuxt 3 and Vue 3
       Backend Nitro and Drizzle ORM
@@ -421,13 +428,13 @@ mindmap
 
 ```text
 Plan B System Topology
-├── 1. Users & Collaboration: Students & friends | Solo or group | Link join (no friending) | Clean auth
+├── 1. Users & Collaboration: Students & friends | Solo or group | Real-time chat | Link join (no friending) | Clean auth
 ├── 2. Preference Gathering: 7-point form | Hidden destination (no map pin, Gemini reads privately)
 ├── 3. Alignment & Scheduling: Date overlaps | Budget ceiling = min(caps) | Destination lock prerequisite
 ├── 4. Constrained Gemini Agent: Scoped to single trip | Existing place IDs only | Stop on 0 places | Zero fake shops
 ├── 5. Dual Operating Modes: Plan Mode (align/schedule) | Trip Mode (next stop, delay flag, single-slot replan, stay lock)
 ├── 6. Map & Money Ledgers: Photon search + tap-to-pin ($0 OSM) | Itemized spend | Debt graph who-owes-whom (no live fares)
-├── 7. PWA Interface & Screens: 390px mobile layout | 5 bottom tabs | 13 sequential screens (00-12)
-├── 8. System Tech Stack: Nuxt 3 + Vue 3 | Nitro Server | Drizzle ORM | Supabase (RLS) | Gemini | Leaflet OSM
+├── 7. PWA Interface & Screens: 390px mobile layout | 6 bottom tabs (Trips, Map, Plan, Money, You, Chat) | 14 screens (00-13)
+├── 8. System Tech Stack: Nuxt 3 + Vue 3 | Nitro Server | Drizzle ORM | Supabase (RLS, Realtime) | Gemini | Leaflet OSM
 └── 9. Explicit Anti-Features: No seed users/trips | No booking checkout APIs | No auto venue scraping | No dynamic fares
 ```

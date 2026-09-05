@@ -36,7 +36,8 @@ Plan B is one unified trip room that guides travelers **from start to finish** �
   - **Plan Mode:** Align member preferences, confirm destination, and schedule itinerary.
   - **Trip Mode:** Live countdown to the next stop, with one-tap "delay" or "cannot go". Mid-trip replanning rewrites only that single disrupted slot; locked flights and hotel stays remain untouched.
 - **Money & Splits:** Expenses are logged directly against itinerary items, calculating an exact "who owes whom" debt ledger. No real-time ticket or fare APIs.
-- **PWA Interface:** Five bottom navigation tabs: **Trips · Map · Plan · Money · You**.
+- **Real-time Team Group Chat:** In-room chat powered by Supabase Realtime where members discuss plans, share place cards, and receive automatic trip notifications (delays, single-slot replans, expense logs).
+- **PWA Interface:** Six bottom navigation tabs: **Trips · Map · Plan · Money · You · Chat** (Chat positioned to the right of You).
 
 ### Alignment with the Hackathon Problem Statement
 
@@ -70,7 +71,7 @@ Persona: four people, four caps, one private wishlist, currently using WhatsApp 
 ## What we built
 
 1. **App name:** Plan B. Slogan: *"When plan A fails, Plan B saves the trip."* Icon: glass compass on navy.
-2. **PWA UI:** 390px phone-first layout with bottom tabs: **Trips · Map · Plan · Money · You**.
+2. **PWA UI:** 390px phone-first layout with 6 bottom tabs: **Trips · Map · Plan · Money · You · Chat** (Chat positioned to the right of You).
 3. **No seed data:** No mock users, sample trips, or seeded attractions.
 4. **Rooms & Joining:** Solo trip or group trip; invite via friends list or copy link (no prior mutual friending required).
 5. **Preference Form:** Each member fills destination wish, dates, budget ceiling, pace, interests, deal-breakers, must-visit.
@@ -83,9 +84,10 @@ Persona: four people, four caps, one private wishlist, currently using WhatsApp 
 12. **Two Modes:** Plan Mode (align & schedule) and Trip Mode (next stop & execution).
 13. **Single-Slot Replan:** Marking a delay or cancellation rewrites only that disrupted block. Locked flights and stays remain untouched.
 14. **Expense Splitting:** Spend logged on itinerary items; computes who owes whom. No dynamic fare lookups.
-15. **Explicit Anti-Features:** No fake seed data, no booking checkouts, no auto nearby venue scraper, no live ticket prices.
+15. **Real-time Team Group Chat:** In-room chat powered by Supabase Realtime; members discuss plans, share place cards, and receive automatic trip notifications (delays, single-slot replans, expense logs).
+16. **Explicit Anti-Features:** No fake seed data, no booking checkouts, no auto nearby venue scraper, no live ticket prices.
 
-### Screens (13)
+### Screens (14)
 
 | # | Screen | What it is for |
 | --- | --- | --- |
@@ -102,6 +104,7 @@ Persona: four people, four caps, one private wishlist, currently using WhatsApp 
 | 10 | Profile | Default travel pace, dietary restrictions, and friends entry |
 | 11 | Invite | Copy join link or invite directly from friends list |
 | 12 | Replan | Replace only the single disrupted slot (locked stays remain unchanged) |
+| 13 | Group Chat | Real-time member chat with itinerary place sharing and live disruption alerts |
 
 ---
 
@@ -206,6 +209,7 @@ Add to Home Screen from a mobile browser to install the PWA.
 5. Group alignment confirms destination. Gemini arranges **those** places into days.
 6. Switch to Trip mode. Mark cannot-go on a slot. Replan rewrites that slot only (locked stays untouched).
 7. Log an expense on an item. See who owes whom.
+8. Open Team Group Chat (Chat tab) to see member messages, shared place cards, and live disruption alerts.
 
 ---
 
