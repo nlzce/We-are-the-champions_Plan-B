@@ -267,6 +267,8 @@ flowchart LR
 | **V2** | Free-text search geocoded via public Nominatim / Google Places | Public Nominatim enforces 1 req/s, fails on informal names, and drops pins in the wrong country. | Unreliable geocoding APIs and misplaced coordinate pins. |
 | **V3 (Final)** | User types place label and **taps map to store lat/lng**. Gemini schedules **only existing place IDs**. | Fully grounded, zero API breakage, 100% truthful data, runs reliably under hackathon conditions. | Hallucinated shops, invented venue names, seed cities, fake reviews. |
 
+V3 stack: Nuxt 3 PWA, Vue 3, Drizzle ORM, Nitro server engine, pnpm, Node, Supabase Auth/Postgres/RLS, Google Gemini, Leaflet + OSM tiles (`<ClientOnly>`).
+
 ---
 
 ## 6. Alternative Ideas Comparison
@@ -399,6 +401,14 @@ mindmap
         10 Profile defaults and dietary
         11 Invite via link or friend
         12 Replan single disrupted slot
+    System Tech Stack
+      Frontend Nuxt 3 and Vue 3
+      Backend Nitro and Drizzle ORM
+      Languages TypeScript and pnpm and Node
+      Data Supabase Auth Postgres Realtime RLS
+      AI Engine Google Gemini trip-scoped
+      Maps Leaflet and OpenStreetMap tiles
+      Hosting Vercel and Supabase
     Explicit Anti-Features
       No fake or seeded demo data
       No flight or hotel booking checkouts
@@ -417,5 +427,6 @@ Plan B System Topology
 ├── 5. Dual Operating Modes: Plan Mode (align/schedule) | Trip Mode (next stop, delay flag, single-slot replan, stay lock)
 ├── 6. Map & Money Ledgers: Tap-to-pin lat/lng (no geocoding) | Itemized spend | Debt graph who-owes-whom (no live fares)
 ├── 7. PWA Interface & Screens: 390px mobile layout | 5 bottom tabs | 13 sequential screens (00-12)
-└── 8. Explicit Anti-Features: No seed users/trips | No booking checkout APIs | No auto venue scraping | No dynamic fares
+├── 8. System Tech Stack: Nuxt 3 + Vue 3 | Nitro Server | Drizzle ORM | Supabase (RLS) | Gemini | Leaflet OSM
+└── 9. Explicit Anti-Features: No seed users/trips | No booking checkout APIs | No auto venue scraping | No dynamic fares
 ```

@@ -4,7 +4,7 @@
 
 Group trip workspace + a constrained Gemini agent. One shared record for people, money, and days. If a stop falls through, only that slot is rewritten.
 
-PWA · Next.js · pnpm · Node · Supabase · Google Gemini
+PWA · Nuxt 3 · Vue 3 · Drizzle ORM · pnpm · Node · Supabase · Google Gemini
 No flight, hotel, or geocoding APIs. No seed users, trips, or attractions.
 
 | | |
@@ -138,14 +138,15 @@ All diagrams are written in Mermaid in [docs/ideation.md](docs/ideation.md). You
 ## Architecture
 
 ```
-PWA (Next.js) → Route Handlers / Server Actions → Supabase (Auth, Postgres, Realtime, RLS)
-                                              ↘ Gemini (generate + replan only)
-                                                 output validated against place IDs
-                                                 then written as itinerary rows
+PWA (Nuxt 3) → Nitro Server Routes / API Handlers → Drizzle ORM → Supabase (Postgres, RLS)
+                                                ↘ Gemini (generate + replan only)
+                                                   output validated against place IDs
+                                                   then written as itinerary rows
 ```
 
-- **Map tiles:** Leaflet + OSM for display. Coordinates from the tap, stored on the place row.
+- **Map tiles:** Leaflet + OSM for display (`<ClientOnly>`). Coordinates from the tap, stored on the place row.
 - **Hidden places:** Supabase Row Level Security (RLS) ensures other members' clients cannot read hidden destinations. The agent route reads them server-side and must never echo the name.
+- **ORM & Type Safety:** Drizzle ORM provides lightweight, zero-binary TypeScript schema definitions and query building with zero cold-start overhead on Vercel.
 - **No RAG / vector DB:** Grounding is strictly the trip room's own database rows.
 - **Security:** Gemini API key stays on the server.
 
@@ -155,13 +156,14 @@ PWA (Next.js) → Route Handlers / Server Actions → Supabase (Auth, Postgres, 
 
 | Layer | Choice |
 | --- | --- |
-| Frontend | Next.js App Router, React, TypeScript, PWA (manifest + service worker) |
+| Frontend | Nuxt 3, Vue 3, TypeScript, PWA (`@vite-pwa/nuxt`) |
 | Package manager | pnpm |
 | Runtime | Node.js |
-| Backend | Next.js Route Handlers and Server Actions |
-| Data / Auth | Supabase Postgres, Auth, Realtime, RLS |
+| Backend & Server Routes | Nitro Engine (Nuxt 3 Server Routes / API Handlers) |
+| ORM | Drizzle ORM (TypeScript-native, zero-binary, serverless-ready) |
+| Data / Auth | Supabase Postgres, Auth, Realtime, RLS (`@nuxtjs/supabase`) |
 | AI | Google Gemini, trip-scoped, allow-list of place IDs |
-| Map | Leaflet + OSM tiles; tap saves lat/lng |
+| Map | Leaflet + OSM tiles; tap saves lat/lng (`<ClientOnly>`) |
 | Hosting | Vercel + Supabase |
 
 ---
@@ -180,16 +182,16 @@ Hackathon cost: Supabase free tier, Vercel hobby, OSM fair use, Gemini called st
 
 ```bash
 pnpm install
-cp .env.example .env.local
+cp .env.example .env
 pnpm dev
 ```
 
 `.env.example` (do not commit real keys):
 
 ```
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+SUPABASE_URL=
+SUPABASE_KEY=
+DATABASE_URL=
 GEMINI_API_KEY=
 ```
 
