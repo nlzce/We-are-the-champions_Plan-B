@@ -251,7 +251,7 @@ flowchart TD
   S03 --> S10["10 Profile<br/>Default pace, dietary, friends"]
 ```
 
-Bottom navigation tabs (always accessible): **Trips · Map · Plan · Money · You · Chat** (Chat positioned to the right of You)
+Bottom navigation tabs (always accessible): **Trips · Map · Plan · Money · You · Chat**
 
 ---
 

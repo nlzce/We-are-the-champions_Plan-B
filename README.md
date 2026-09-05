@@ -37,7 +37,7 @@ Plan B is one unified trip room that guides travelers **from start to finish** �
   - **Trip Mode:** Live countdown to the next stop, with one-tap "delay" or "cannot go". Mid-trip replanning rewrites only that single disrupted slot; locked flights and hotel stays remain untouched.
 - **Money & Splits:** Expenses are logged directly against itinerary items, calculating an exact "who owes whom" debt ledger. No real-time ticket or fare APIs.
 - **Real-time Team Group Chat:** In-room chat powered by Supabase Realtime where members discuss plans, share place cards, and receive automatic trip notifications (delays, single-slot replans, expense logs).
-- **PWA Interface:** Six bottom navigation tabs: **Trips · Map · Plan · Money · You · Chat** (Chat positioned to the right of You).
+- **PWA Interface:** Six bottom navigation tabs: **Trips · Map · Plan · Money · You · Chat**.
 
 ### Alignment with the Hackathon Problem Statement
 
@@ -71,7 +71,7 @@ Persona: four people, four caps, one private wishlist, currently using WhatsApp 
 ## What we built
 
 1. **App name:** Plan B. Slogan: *"When plan A fails, Plan B saves the trip."* Icon: glass compass on navy.
-2. **PWA UI:** 390px phone-first layout with 6 bottom tabs: **Trips · Map · Plan · Money · You · Chat** (Chat positioned to the right of You).
+2. **PWA UI:** 390px phone-first layout with 6 bottom tabs: **Trips · Map · Plan · Money · You · Chat**.
 3. **No seed data:** No mock users, sample trips, or seeded attractions.
 4. **Rooms & Joining:** Solo trip or group trip; invite via friends list or copy link (no prior mutual friending required).
 5. **Preference Form:** Each member fills destination wish, dates, budget ceiling, pace, interests, deal-breakers, must-visit.
