@@ -84,7 +84,7 @@ flowchart LR
     subgraph UC_Prefs["3. Preferences & Display Map"]
       UC06(["UC06: Submit Preference Form<br/>(Where, dates, budget, pace, deal-breakers)"]):::usecase
       UC07(["UC07: Set Hidden Destination<br/>(Hidden from peers & map pins)"]):::usecase
-      UC08(["UC08: Add Place via Search or Map Tap<br/>(Photon autocomplete or tap pin; $0 open-source)"]):::usecase
+      UC08(["UC08: Add Place via Search or Map Tap<br/>(Photon autocomplete or tap pin; open-source OSM)"]):::usecase
     end
 
     subgraph UC_Plan["4. Alignment & Scheduling"]
@@ -140,7 +140,7 @@ flowchart LR
 | **UC05** | Invite from Friends | Traveler | Pulls from the user's friend connection list. |
 | **UC06** | Submit Preference Form | Traveler | Submits destination wish, date window, budget ceiling, pace, interests, deal-breakers, and must-visits. |
 | **UC07** | Set Hidden Destination | Traveler | Destination toggle hides the place from peers and map display. Only Gemini reads it server-side. |
-| **UC08** | Add Place (Search / Tap) | Traveler | Search places with free Photon fuzzy autocomplete (OSM) or click map to drop custom pin. $0 cost, zero API keys. |
+| **UC08** | Add Place (Search / Tap) | Traveler | Search places with Photon fuzzy autocomplete (OSM) or click map to drop custom pin. Open-source geocoding with no booking lock-in. |
 | **UC09** | View Group Alignment | Traveler | Shows computed date overlaps, the group budget ceiling (`min(individual caps)`), and deal-breakers. |
 | **UC10** | Confirm Destination | Trip Owner / Group | Prerequisite: Destination must be locked before daily itinerary generation is unlocked. |
 | **UC11** | Generate Itinerary | Gemini Agent | Sequences member-added place IDs into days. Gemini is forbidden from inventing place names or prices. |
@@ -377,7 +377,7 @@ mindmap
         Photon open-source fuzzy search
         Tap map for custom coordinates
         Displays public pins only
-        Zero paid geocoding APIs
+        Open-source geocoding engine
         Empty inputs produce empty map
       Expense and split ledger
         Log actual spend on itinerary items
@@ -433,7 +433,7 @@ Plan B System Topology
 ├── 3. Alignment & Scheduling: Date overlaps | Budget ceiling = min(caps) | Destination lock prerequisite
 ├── 4. Constrained Gemini Agent: Scoped to single trip | Existing place IDs only | Stop on 0 places | Zero fake shops
 ├── 5. Dual Operating Modes: Plan Mode (align/schedule) | Trip Mode (next stop, delay flag, single-slot replan, stay lock)
-├── 6. Map & Money Ledgers: Photon search + tap-to-pin ($0 OSM) | Itemized spend | Debt graph who-owes-whom (no live fares)
+├── 6. Map & Money Ledgers: Photon search + tap-to-pin (open-source OSM) | Itemized spend | Debt graph who-owes-whom (no live fares)
 ├── 7. PWA Interface & Screens: 390px mobile layout | 6 bottom tabs (Trips, Map, Plan, Money, You, Chat) | 14 screens (00-13)
 ├── 8. System Tech Stack: Nuxt 3 + Vue 3 | Nitro Server | Drizzle ORM | Supabase (RLS, Realtime) | Gemini | Leaflet OSM
 └── 9. Explicit Anti-Features: No seed users/trips | No booking checkout APIs | No auto venue scraping | No dynamic fares

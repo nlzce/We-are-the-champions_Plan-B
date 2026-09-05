@@ -30,7 +30,7 @@ Plan B is one unified trip room that guides travelers **from start to finish** �
 - **Preference Form:** One submission per member covering destination wishlist, available dates, budget ceiling, pace, interests, deal-breakers (雷区), and must-visit spots.
 - **Hidden Destination:** A destination can be marked hidden from other members. It does not drop a pin on the shared map. Only this trip’s Gemini agent may access it, and the agent is strictly forbidden from naming it in outputs.
 - **Alignment Engine:** System automatically computes date overlap windows, the group budget ceiling (strictly the lowest individual cap), and common constraints. The group confirms destination **before** generating a day-by-day itinerary.
-- **Grounded Dual-Mode Map:** Displays only public, member-added points. Members can search places with free **Photon fuzzy autocomplete** (open-source OpenStreetMap geocoder by Komoot, $0 cost) to fly and auto-pin, or tap the map directly for custom spots. Zero paid APIs, no flight/hotel checkouts. Empty inputs produce an empty map.
+- **Grounded Dual-Mode Map:** Displays only public, member-added points. Members can search places with **Photon fuzzy autocomplete** (open-source OpenStreetMap geocoder by Komoot) to fly and auto-pin, or tap the map directly for custom spots. Independent open-source architecture with no commercial flight/hotel checkout lock-in. Empty inputs produce an empty map.
 - **Constrained Gemini Agent:** Exactly one agent per trip, reading only that trip's data. It can only arrange days using existing place IDs. If zero places exist, it halts; it never hallucinates venue names or prices.
 - **Two Operating Modes:**
   - **Plan Mode:** Align member preferences, confirm destination, and schedule itinerary.
@@ -78,7 +78,7 @@ Persona: four people, four caps, one private wishlist, currently using WhatsApp 
 6. **Hidden Destination Privacy:** Destination can be hidden from peers; omitted from map; Gemini reads it privately and cannot reveal its name.
 7. **Alignment Engine:** Calculates date overlap, group budget ceiling (= lowest individual cap), and shared constraints.
 8. **Destination Confirmation:** Group confirms destination before day-by-day scheduling starts.
-9. **Grounded Dual-Mode Map:** Search places with free open-source Photon fuzzy autocomplete or tap map to drop custom coordinates. Zero paid APIs, no geocoding costs. Zero places = empty map.
+9. **Grounded Dual-Mode Map:** Search places with open-source Photon fuzzy autocomplete or tap map to drop custom coordinates. Self-contained architecture without external commercial geocoding dependencies. Zero places = empty map.
 10. **Trip-Scoped Gemini:** One agent per trip room, reads only this trip's rows.
 11. **Hallucination Guardrail:** Agent schedules only existing place IDs. If no places exist, it halts. Never invents shops or prices.
 12. **Two Modes:** Plan Mode (align & schedule) and Trip Mode (next stop & execution).
@@ -96,7 +96,7 @@ Persona: four people, four caps, one private wishlist, currently using WhatsApp 
 | 02 | Trips | Room list; allowed to be empty initially |
 | 03 | Trip Home | Alignment hub; switch between Plan Mode and Trip Mode |
 | 04 | Preference Form | Destination wishlist, dates, budget cap, pace, interests, deal-breakers, must-visit (hidden toggle) |
-| 05 | Map | Public pins; search via Photon fuzzy autocomplete or tap map to drop coordinates ($0 open-source OSM) |
+| 05 | Map | Public pins; search via Photon fuzzy autocomplete or tap map to drop coordinates (open-source OSM) |
 | 06 | Itinerary | Day-by-day itinerary arranged strictly from member-added place IDs |
 | 07 | Trip Mode | Next stop countdown, quick expense logger, mark delay / cannot-go |
 | 08 | Money | Group budget ceiling and who-owes-whom debt split ledger |
@@ -166,7 +166,7 @@ PWA (Nuxt 3) → Nitro Server Routes / API Handlers → Drizzle ORM → Supabase
 | ORM | Drizzle ORM (TypeScript-native, zero-binary, serverless-ready) |
 | Data / Auth | Supabase Postgres, Auth, Realtime, RLS (`@nuxtjs/supabase`) |
 | AI | Google Gemini, trip-scoped, allow-list of place IDs |
-| Map & Geocoding | Leaflet + OpenStreetMap tiles + Photon open-source fuzzy search ($0, no API keys, `<ClientOnly>`) |
+| Map & Geocoding | Leaflet + OpenStreetMap tiles + Photon open-source fuzzy search (no external API keys, `<ClientOnly>`) |
 | Hosting | Vercel + Supabase |
 
 ---
@@ -177,7 +177,7 @@ PWA (Nuxt 3) → Nitro Server Routes / API Handlers → Drizzle ORM → Supabase
 
 **Out (Explicit Anti-Features):** Ticket checkout, live inventory, geocoding service, seed demo cities, auto nearby venue scraper.
 
-Hackathon cost: Supabase free tier, Vercel hobby, OSM fair use, Gemini called strictly on generate and replan.
+Infrastructure: Supabase (Auth, Postgres, Realtime), Vercel serverless, OSM tiles, Gemini called strictly on generate and replan.
 
 ---
 

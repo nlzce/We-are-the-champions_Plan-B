@@ -146,7 +146,7 @@ flowchart LR
     subgraph UC_Prefs["3. Preferences & Display Map"]
       UC06(["UC06: Submit Preference Form<br/>(Where, dates, budget, pace, deal-breakers)"]):::usecase
       UC07(["UC07: Set Hidden Destination<br/>(Hidden from peers & map pins)"]):::usecase
-      UC08(["UC08: Add Place via Search or Map Tap<br/>(Photon autocomplete or tap pin; $0 open-source)"]):::usecase
+      UC08(["UC08: Add Place via Search or Map Tap<br/>(Photon autocomplete or tap pin; open-source OSM)"]):::usecase
     end
 
     subgraph UC_Plan["4. Alignment & Scheduling"]
@@ -206,7 +206,7 @@ flowchart TD
     RoomAction -->|Create Solo or Group| Create["Create Empty Trip Room"]
     RoomAction -->|Join via Share Link| JoinLink["Join Trip via Link<br/>(No prior friendship required)"]
     RoomAction -->|Join via Friend Invite| JoinFriend["Accept Friend Invite"]
-    
+
     Create --> FillPrefs["Submit Member Preference Form<br/>(Where, dates, budget cap, pace,<br/>interests, deal-breakers, must-visit)"]
     JoinLink --> FillPrefs
     JoinFriend --> FillPrefs
@@ -378,7 +378,7 @@ mindmap
         Photon open-source fuzzy search
         Tap map for custom coordinates
         Displays public pins only
-        Zero paid geocoding APIs
+        Open-source geocoding engine
         Empty inputs produce empty map
       Expense and split ledger
         Log actual spend on itinerary items
