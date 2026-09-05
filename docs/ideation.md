@@ -83,7 +83,7 @@ flowchart LR
     subgraph UC_Prefs["3. Preferences & Display Map"]
       UC06(["UC06: Submit Preference Form<br/>(Where, dates, budget, pace, deal-breakers)"]):::usecase
       UC07(["UC07: Set Hidden Destination<br/>(Hidden from peers & map pins)"]):::usecase
-      UC08(["UC08: Tap Map to Drop Pin<br/>(Store lat/lng; no geocoding API)"]):::usecase
+      UC08(["UC08: Add Place via Search or Map Tap<br/>(Photon autocomplete or tap pin; $0 open-source)"]):::usecase
     end
 
     subgraph UC_Plan["4. Alignment & Scheduling"]
@@ -138,7 +138,7 @@ flowchart LR
 | **UC05** | Invite from Friends | Traveler | Pulls from the user's friend connection list. |
 | **UC06** | Submit Preference Form | Traveler | Submits destination wish, date window, budget ceiling, pace, interests, deal-breakers, and must-visits. |
 | **UC07** | Set Hidden Destination | Traveler | Destination toggle hides the place from peers and map display. Only Gemini reads it server-side. |
-| **UC08** | Tap Map to Drop Pin | Traveler | Clicking the map records latitude and longitude directly. No geocoding, flight, or hotel APIs. |
+| **UC08** | Add Place (Search / Tap) | Traveler | Search places with free Photon fuzzy autocomplete (OSM) or click map to drop custom pin. $0 cost, zero API keys. |
 | **UC09** | View Group Alignment | Traveler | Shows computed date overlaps, the group budget ceiling (`min(individual caps)`), and deal-breakers. |
 | **UC10** | Confirm Destination | Trip Owner / Group | Prerequisite: Destination must be locked before daily itinerary generation is unlocked. |
 | **UC11** | Generate Itinerary | Gemini Agent | Sequences member-added place IDs into days. Gemini is forbidden from inventing place names or prices. |
@@ -173,10 +173,10 @@ flowchart TD
     HideToggle -->|Yes| MarkHidden["Toggle 'Hide from members'<br/>(Omitted from shared map pins)"]
     HideToggle -->|No| MarkPublic["Keep Destination Public"]
 
-    MarkHidden --> TapMap["Tap Map to Drop Place Pin<br/>(Saves Lat/Lng; no geocoding)"]
-    MarkPublic --> TapMap
+    MarkHidden --> AddPlace["Add Place: Search via Photon<br/>OR Tap Map for Custom Pin"]
+    MarkPublic --> AddPlace
 
-    TapMap --> CheckAlign["Review Group Alignment Dashboard"]
+    AddPlace --> CheckAlign["Review Group Alignment Dashboard"]
   end
 
   subgraph SYSTEM["⚙️ Plan B System Engine"]
@@ -188,7 +188,7 @@ flowchart TD
 
   subgraph GEMINI["🤖 Trip-Scoped Gemini Agent"]
     ValidatePlaces -->|No| Halt["STOP SCHEDULING<br/>(Zero fake venues or prices invented.<br/>Prompts members to add places)"]
-    Halt -.-> TapMap
+    Halt -.-> AddPlace
 
     ValidatePlaces -->|Yes| IngestData["Ingest Trip Data Server-Side:<br/>- Allowed place IDs<br/>- Hidden destination (Secretly)<br/>- Group budget cap & Pace"]
     IngestData --> ScheduleDays["Generate Day-by-Day Itinerary<br/>(Restricted to existing place IDs;<br/>NEVER reveals hidden destination name)"]
@@ -234,7 +234,7 @@ flowchart TD
   S02 --> S03["03 Trip Home<br/>Switch Plan / Trip mode"]
   S03 --> S11["11 Invite<br/>Copy link or friend invite"]
   S03 --> S04["04 Preference Form<br/>Dates, cap, pace, deal-breakers, hidden toggle"]
-  S04 --> S05["05 Map<br/>Public pins; tap map for lat/lng"]
+  S04 --> S05["05 Map<br/>Photon fuzzy search + tap map"]
   S05 --> AlignChk{"Destination confirmed &<br/>places added?"}
   AlignChk -->|No| S04
   AlignChk -->|Yes| S09["09 Agent<br/>Gemini arranges existing IDs"]
@@ -257,17 +257,17 @@ Bottom navigation tabs (always accessible): **Trips · Map · Plan · Money · Y
 
 ```mermaid
 flowchart LR
-  V1["V1: Map + Booking APIs"] --> V2["V2: No Booking APIs<br/>Still Nominatim Geocoding"]
-  V2 --> V3["V3 FINAL: Plan B<br/>Tap-to-Pin + Constrained Gemini"]
+  V1["V1: Map + Booking APIs"] --> V2["V2: No Booking APIs<br/>Strict Nominatim (1 req/s)"]
+  V2 --> V3["V3 FINAL: Plan B<br/>OSM + Photon Search + Tap Map"]
 ```
 
 | Architecture | What We Explored | Why It Failed / Was Discarded | Source of Untrue Data Removed |
 | --- | --- | --- | --- |
 | **V1** | Integrated live flight, hotel, and attraction booking APIs | API keys fail, rate limits hit, and failure modes produce fake prices and broken demo flows. | In-app ticket checkout, dynamic live fares, fake availability counters. |
-| **V2** | Free-text search geocoded via public Nominatim / Google Places | Public Nominatim enforces 1 req/s, fails on informal names, and drops pins in the wrong country. | Unreliable geocoding APIs and misplaced coordinate pins. |
-| **V3 (Final)** | User types place label and **taps map to store lat/lng**. Gemini schedules **only existing place IDs**. | Fully grounded, zero API breakage, 100% truthful data, runs reliably under hackathon conditions. | Hallucinated shops, invented venue names, seed cities, fake reviews. |
+| **V2** | Free-text search geocoded via public Nominatim / Google Places | Public Nominatim enforces 1 req/s, fails on informal names, and drops pins in the wrong country. | Unreliable commercial geocoding APIs and misplaced coordinate pins. |
+| **V3 (Final)** | User searches via **open-source Photon (OSM autocomplete)** or **taps map** for custom spots. Gemini schedules **only existing place IDs**. | User-friendly search without paying for Google Maps; zero API breakage; 100% truthful data under hackathon conditions. | Hallucinated shops, invented venue names, seed cities, fake reviews. |
 
-V3 stack: Nuxt 3 PWA, Vue 3, Drizzle ORM, Nitro server engine, pnpm, Node, Supabase Auth/Postgres/RLS, Google Gemini, Leaflet + OSM tiles (`<ClientOnly>`).
+V3 stack: Nuxt 3 PWA, Vue 3, Drizzle ORM, Nitro server engine, pnpm, Node, Supabase Auth/Postgres/RLS, Google Gemini, Leaflet + OSM tiles + Photon fuzzy geocoder (`<ClientOnly>`).
 
 ---
 
@@ -367,11 +367,12 @@ mindmap
           Patches only the disrupted hour
           Locked flights and stays remain fixed
     Map and Money Ledgers
-      Display map engine
+      Grounded map engine
         Leaflet with OpenStreetMap tiles
-        Tap map to save lat and lng directly
+        Photon open-source fuzzy search
+        Tap map for custom coordinates
         Displays public pins only
-        Zero geocoding API dependencies
+        Zero paid geocoding APIs
         Empty inputs produce empty map
       Expense and split ledger
         Log actual spend on itinerary items
@@ -425,7 +426,7 @@ Plan B System Topology
 ├── 3. Alignment & Scheduling: Date overlaps | Budget ceiling = min(caps) | Destination lock prerequisite
 ├── 4. Constrained Gemini Agent: Scoped to single trip | Existing place IDs only | Stop on 0 places | Zero fake shops
 ├── 5. Dual Operating Modes: Plan Mode (align/schedule) | Trip Mode (next stop, delay flag, single-slot replan, stay lock)
-├── 6. Map & Money Ledgers: Tap-to-pin lat/lng (no geocoding) | Itemized spend | Debt graph who-owes-whom (no live fares)
+├── 6. Map & Money Ledgers: Photon search + tap-to-pin ($0 OSM) | Itemized spend | Debt graph who-owes-whom (no live fares)
 ├── 7. PWA Interface & Screens: 390px mobile layout | 5 bottom tabs | 13 sequential screens (00-12)
 ├── 8. System Tech Stack: Nuxt 3 + Vue 3 | Nitro Server | Drizzle ORM | Supabase (RLS) | Gemini | Leaflet OSM
 └── 9. Explicit Anti-Features: No seed users/trips | No booking checkout APIs | No auto venue scraping | No dynamic fares

@@ -30,7 +30,7 @@ Plan B is one unified trip room that guides travelers **from start to finish** �
 - **Preference Form:** One submission per member covering destination wishlist, available dates, budget ceiling, pace, interests, deal-breakers (雷区), and must-visit spots.
 - **Hidden Destination:** A destination can be marked hidden from other members. It does not drop a pin on the shared map. Only this trip’s Gemini agent may access it, and the agent is strictly forbidden from naming it in outputs.
 - **Alignment Engine:** System automatically computes date overlap windows, the group budget ceiling (strictly the lowest individual cap), and common constraints. The group confirms destination **before** generating a day-by-day itinerary.
-- **Display Map:** Displays only public, member-added points. Tapping the map records coordinates (latitude/longitude) directly. No geocoding, flight, or hotel APIs. Empty inputs produce an empty map.
+- **Grounded Dual-Mode Map:** Displays only public, member-added points. Members can search places with free **Photon fuzzy autocomplete** (open-source OpenStreetMap geocoder by Komoot, $0 cost) to fly and auto-pin, or tap the map directly for custom spots. Zero paid APIs, no flight/hotel checkouts. Empty inputs produce an empty map.
 - **Constrained Gemini Agent:** Exactly one agent per trip, reading only that trip's data. It can only arrange days using existing place IDs. If zero places exist, it halts; it never hallucinates venue names or prices.
 - **Two Operating Modes:**
   - **Plan Mode:** Align member preferences, confirm destination, and schedule itinerary.
@@ -77,7 +77,7 @@ Persona: four people, four caps, one private wishlist, currently using WhatsApp 
 6. **Hidden Destination Privacy:** Destination can be hidden from peers; omitted from map; Gemini reads it privately and cannot reveal its name.
 7. **Alignment Engine:** Calculates date overlap, group budget ceiling (= lowest individual cap), and shared constraints.
 8. **Destination Confirmation:** Group confirms destination before day-by-day scheduling starts.
-9. **Display Map:** Tapping map records lat/lng. No geocoding, ticket, or hotel APIs. Zero places = empty map.
+9. **Grounded Dual-Mode Map:** Search places with free open-source Photon fuzzy autocomplete or tap map to drop custom coordinates. Zero paid APIs, no geocoding costs. Zero places = empty map.
 10. **Trip-Scoped Gemini:** One agent per trip room, reads only this trip's rows.
 11. **Hallucination Guardrail:** Agent schedules only existing place IDs. If no places exist, it halts. Never invents shops or prices.
 12. **Two Modes:** Plan Mode (align & schedule) and Trip Mode (next stop & execution).
@@ -94,7 +94,7 @@ Persona: four people, four caps, one private wishlist, currently using WhatsApp 
 | 02 | Trips | Room list; allowed to be empty initially |
 | 03 | Trip Home | Alignment hub; switch between Plan Mode and Trip Mode |
 | 04 | Preference Form | Destination wishlist, dates, budget cap, pace, interests, deal-breakers, must-visit (hidden toggle) |
-| 05 | Map | Public pins; tap map to drop coordinates (lat/lng) without geocoding APIs |
+| 05 | Map | Public pins; search via Photon fuzzy autocomplete or tap map to drop coordinates ($0 open-source OSM) |
 | 06 | Itinerary | Day-by-day itinerary arranged strictly from member-added place IDs |
 | 07 | Trip Mode | Next stop countdown, quick expense logger, mark delay / cannot-go |
 | 08 | Money | Group budget ceiling and who-owes-whom debt split ledger |
@@ -125,11 +125,11 @@ All diagrams are written in Mermaid in [docs/ideation.md](docs/ideation.md). You
 
 | Asset | What it shows |
 | --- | --- |
-| **Problem Tree** | Three root organisation failures → no trusted trip record → overspend, misalignment, fake shops, collapse after delay |
+| **Problem Tree** | Three root organization failures → no trusted trip record → overspend, misalignment, fake shops, collapse after delay |
 | **Use Case Diagram** | UML boundary, actors (Member, Owner, Gemini), and core use cases from alignment to single-slot replanning |
 | **Activity Diagram** | Swimlane workflow across Traveler, Plan B System, and Gemini (handling hidden pins, zero-place stop, and slot-level replan) |
 | **User Flow** | Step-by-step navigation flow and mode transitions across all 13 screens |
-| **Idea Evolution** | V1 (APIs) → V2 (No booking, Nominatim) → V3 (Tap-to-pin + Gemini allow-list). Each step dropped untrue data |
+| **Idea Evolution** | V1 (APIs) → V2 (No booking, Nominatim) → V3 (Photon search + Tap-to-pin + Gemini allow-list). Dropped untrue data |
 | **Alternatives** | Booking super-app vs chat bot vs Plan B workspace. Workspace chosen because it solves the actual coordination gap |
 | **Mindmap** | Clean Mermaid mindmap: Users & Rooms, Product Core, Privacy, Grounding, Screens, Functions, Stack, Anti-features |
 
@@ -144,7 +144,7 @@ PWA (Nuxt 3) → Nitro Server Routes / API Handlers → Drizzle ORM → Supabase
                                                    then written as itinerary rows
 ```
 
-- **Map tiles:** Leaflet + OSM for display (`<ClientOnly>`). Coordinates from the tap, stored on the place row.
+- **Map tiles:** Leaflet + OSM for display (`<ClientOnly>`). Search powered by Photon open-source geocoder.
 - **Hidden places:** Supabase Row Level Security (RLS) ensures other members' clients cannot read hidden destinations. The agent route reads them server-side and must never echo the name.
 - **ORM & Type Safety:** Drizzle ORM provides lightweight, zero-binary TypeScript schema definitions and query building with zero cold-start overhead on Vercel.
 - **No RAG / vector DB:** Grounding is strictly the trip room's own database rows.
@@ -163,7 +163,7 @@ PWA (Nuxt 3) → Nitro Server Routes / API Handlers → Drizzle ORM → Supabase
 | ORM | Drizzle ORM (TypeScript-native, zero-binary, serverless-ready) |
 | Data / Auth | Supabase Postgres, Auth, Realtime, RLS (`@nuxtjs/supabase`) |
 | AI | Google Gemini, trip-scoped, allow-list of place IDs |
-| Map | Leaflet + OSM tiles; tap saves lat/lng (`<ClientOnly>`) |
+| Map & Geocoding | Leaflet + OpenStreetMap tiles + Photon open-source fuzzy search ($0, no API keys, `<ClientOnly>`) |
 | Hosting | Vercel + Supabase |
 
 ---

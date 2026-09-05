@@ -145,7 +145,7 @@ flowchart LR
     subgraph UC_Prefs["3. Preferences & Display Map"]
       UC06(["UC06: Submit Preference Form<br/>(Where, dates, budget, pace, deal-breakers)"]):::usecase
       UC07(["UC07: Set Hidden Destination<br/>(Hidden from peers & map pins)"]):::usecase
-      UC08(["UC08: Tap Map to Drop Pin<br/>(Store lat/lng; no geocoding API)"]):::usecase
+      UC08(["UC08: Add Place via Search or Map Tap<br/>(Photon autocomplete or tap pin; $0 open-source)"]):::usecase
     end
 
     subgraph UC_Plan["4. Alignment & Scheduling"]
@@ -204,7 +204,7 @@ flowchart TD
     RoomAction -->|Create Solo or Group| Create["Create Empty Trip Room"]
     RoomAction -->|Join via Share Link| JoinLink["Join Trip via Link<br/>(No prior friendship required)"]
     RoomAction -->|Join via Friend Invite| JoinFriend["Accept Friend Invite"]
-
+    
     Create --> FillPrefs["Submit Member Preference Form<br/>(Where, dates, budget cap, pace,<br/>interests, deal-breakers, must-visit)"]
     JoinLink --> FillPrefs
     JoinFriend --> FillPrefs
@@ -213,10 +213,10 @@ flowchart TD
     HideToggle -->|Yes| MarkHidden["Toggle 'Hide from members'<br/>(Omitted from shared map pins)"]
     HideToggle -->|No| MarkPublic["Keep Destination Public"]
 
-    MarkHidden --> TapMap["Tap Map to Drop Place Pin<br/>(Saves Lat/Lng; no geocoding)"]
-    MarkPublic --> TapMap
+    MarkHidden --> AddPlace["Add Place: Search via Photon<br/>OR Tap Map for Custom Pin"]
+    MarkPublic --> AddPlace
 
-    TapMap --> CheckAlign["Review Group Alignment Dashboard"]
+    AddPlace --> CheckAlign["Review Group Alignment Dashboard"]
   end
 
   subgraph SYSTEM["⚙️ Plan B System Engine"]
@@ -228,7 +228,7 @@ flowchart TD
 
   subgraph GEMINI["🤖 Trip-Scoped Gemini Agent"]
     ValidatePlaces -->|No| Halt["STOP SCHEDULING<br/>(Zero fake venues or prices invented.<br/>Prompts members to add places)"]
-    Halt -.-> TapMap
+    Halt -.-> AddPlace
 
     ValidatePlaces -->|Yes| IngestData["Ingest Trip Data Server-Side:<br/>- Allowed place IDs<br/>- Hidden destination (Secretly)<br/>- Group budget cap & Pace"]
     IngestData --> ScheduleDays["Generate Day-by-Day Itinerary<br/>(Restricted to existing place IDs;<br/>NEVER reveals hidden destination name)"]
@@ -262,7 +262,7 @@ flowchart TD
   S02 --> S03["03 Trip Home<br/>Switch Plan / Trip mode"]
   S03 --> S11["11 Invite<br/>Copy link or friend invite"]
   S03 --> S04["04 Preference Form<br/>Dates, cap, pace, deal-breakers, hidden toggle"]
-  S04 --> S05["05 Map<br/>Public pins; tap map for lat/lng"]
+  S04 --> S05["05 Map<br/>Photon fuzzy search + tap map"]
   S05 --> AlignChk{"Destination confirmed &<br/>places added?"}
   AlignChk -->|No| S04
   AlignChk -->|Yes| S09["09 Agent<br/>Gemini arranges existing IDs"]
@@ -281,8 +281,8 @@ flowchart TD
       <p>Architectural progression dropping sources of untrue data at each pivot.</p>
       <div class="mermaid">
 flowchart LR
-  V1["V1: Map + Booking APIs"] --> V2["V2: No Booking APIs<br/>Still Nominatim Geocoding"]
-  V2 --> V3["V3 FINAL: Plan B<br/>Tap-to-Pin + Constrained Gemini"]
+  V1["V1: Map + Booking APIs"] --> V2["V2: No Booking APIs<br/>Strict Nominatim (1 req/s)"]
+  V2 --> V3["V3 FINAL: Plan B<br/>OSM + Photon Search + Tap Map"]
       </div>
     </div>
 
@@ -369,11 +369,12 @@ mindmap
           Patches only the disrupted hour
           Locked flights and stays remain fixed
     Map and Money Ledgers
-      Display map engine
+      Grounded map engine
         Leaflet with OpenStreetMap tiles
-        Tap map to save lat and lng directly
+        Photon open-source fuzzy search
+        Tap map for custom coordinates
         Displays public pins only
-        Zero geocoding API dependencies
+        Zero paid geocoding APIs
         Empty inputs produce empty map
       Expense and split ledger
         Log actual spend on itinerary items
