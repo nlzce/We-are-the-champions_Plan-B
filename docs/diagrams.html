@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plan B — Ideation & Architecture Diagrams</title>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 40px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 20px;
+    }
+    h1 {
+      font-size: 2.25rem;
+      margin-bottom: 8px;
+      color: #1e293b;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      background: #e0f2fe;
+      color: #0369a1;
+      margin-right: 8px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 36px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 12px;
+      color: #334155;
+    }
+    .card p {
+      color: #64748b;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Plan B — Architecture & Ideation Diagrams</h1>
+      <div>
+        <span class="badge">Team: We Are The Champions</span>
+        <span class="badge">Track: Lifestyle · Planning an Escape</span>
+        <span class="badge">Status: Locked Specs</span>
+      </div>
+      <p style="color: #64748b; margin-top: 12px;">
+        Open this file in any browser to inspect, present, or screenshot all project diagrams.
+      </p>
+    </header>
+
+    <div class="card">
+      <h2>1. Problem Tree</h2>
+      <p>Three root causes of fragmented group travel produce one core breakdown: <strong>No single trusted trip record</strong>, resulting in overspending, fake shops, and total trip collapse after delays.</p>
+      <div class="mermaid">
+flowchart TB
+  subgraph CAUSES["Root Causes (How Work is Organised)"]
+    C1["Fragmentation Across Apps<br/>Tickets in email, money in Splitwise,<br/>day lists in Notes, talk in WhatsApp"]
+    C2["Unstructured Preferences in Chat<br/>Dates, budgets, and deal-breakers<br/>are spoken, never normalized or merged"]
+    C3["Unconstrained AI & Dynamic APIs<br/>Models invent fake venues/prices;<br/>booking APIs introduce rate limits and failures"]
+  end
+
+  P["CORE PROBLEM<br/>The group has no single trusted trip record"]
+
+  subgraph EFFECTS["Observed Downstream Effects"]
+    E1["Dates and Budgets Never Lock<br/>Group compromises upward into overspending"]
+    E2["Awkward Post-Trip Split Friction<br/>Spend tracked retroactively in separate tools"]
+    E3["Hallucinated Itineraries<br/>AI schedules venues that do not exist in reality"]
+    E4["Single-Point Fragility<br/>One delay collapses the whole day with no slot-level patch"]
+  end
+
+  C1 --> P
+  C2 --> P
+  C3 --> P
+  P --> E1
+  P --> E2
+  P --> E3
+  P --> E4
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. Use Case Diagram</h2>
+      <p>Formal UML Use Case representation of the Plan B workspace boundary, distinguishing interactions between Travelers, the Trip Owner, and the Trip-Scoped Gemini Agent.</p>
+      <div class="mermaid">
+flowchart LR
+  classDef actor fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,font-weight:bold;
+  classDef usecase fill:#ffffff,stroke:#37474f,stroke-width:1.5px;
+  classDef system fill:#f8f9fa,stroke:#455a64,stroke-width:2px;
+  classDef ai fill:#ede7f6,stroke:#7e57c2,stroke-width:2px,font-weight:bold;
+
+  Traveler["👤 Traveler / Member"]:::actor
+  Owner["👑 Trip Owner"]:::actor
+  Gemini["🤖 Trip-Scoped Gemini Agent"]:::ai
+
+  Owner -.->|inherits| Traveler
+
+  subgraph Boundary["System Boundary: Plan B Workspace (PWA)"]
+    subgraph UC_Auth["1. Account & Profile"]
+      UC01(["UC01: Register & Login<br/>(No mock/seed accounts)"]):::usecase
+      UC02(["UC02: Manage Profile<br/>(Default pace, dietary, friends)"]):::usecase
+    end
+
+    subgraph UC_Room["2. Trip Rooms"]
+      UC03(["UC03: Create / View Trip Room<br/>(Allowed to be empty initially)"]):::usecase
+      UC04(["UC04: Join via Share Link<br/>(No prior friending required)"]):::usecase
+      UC05(["UC05: Invite from Friends List"]):::usecase
+    end
+
+    subgraph UC_Prefs["3. Preferences & Display Map"]
+      UC06(["UC06: Submit Preference Form<br/>(Where, dates, budget, pace, deal-breakers)"]):::usecase
+      UC07(["UC07: Set Hidden Destination<br/>(Hidden from peers & map pins)"]):::usecase
+      UC08(["UC08: Tap Map to Drop Pin<br/>(Store lat/lng; no geocoding API)"]):::usecase
+    end
+
+    subgraph UC_Plan["4. Alignment & Scheduling"]
+      UC09(["UC09: View Group Alignment<br/>(Date overlap, lowest cap ceiling)"]):::usecase
+      UC10(["UC10: Confirm Destination"]):::usecase
+      UC11(["UC11: Generate Day-by-Day Itinerary<br/>(Arrange existing place IDs only)"]):::usecase
+      UC12(["UC12: Enforce Hallucination Guardrail<br/>(Halt if zero places exist)"]):::usecase
+    end
+
+    subgraph UC_Trip["5. Trip Mode & Slot Replan"]
+      UC13(["UC13: View Next Stop"]):::usecase
+      UC14(["UC14: Mark Delay / Cannot-Go"]):::usecase
+      UC15(["UC15: Replan Single Disrupted Slot<br/>(Preserve locked hotels/flights)"]):::usecase
+    end
+
+    subgraph UC_Money["6. Expense & Settlement"]
+      UC16(["UC16: Log Itemized Expense"]):::usecase
+      UC17(["UC17: Settle Who-Owes-Whom<br/>(No live fare scraping)"]):::usecase
+    end
+  end
+
+  Traveler --- UC01
+  Traveler --- UC02
+  Traveler --- UC03
+  Traveler --- UC04
+  Traveler --- UC05
+  Traveler --- UC06
+  Traveler --- UC07
+  Traveler --- UC08
+  Traveler --- UC09
+  Traveler --- UC13
+  Traveler --- UC14
+  Traveler --- UC16
+  Traveler --- UC17
+
+  Owner --- UC10
+
+  UC07 -.->|passes secretly to| Gemini
+  UC11 -.->|requires| UC10
+  UC11 --- Gemini
+  UC12 --- Gemini
+  UC14 -.->|triggers| UC15
+  UC15 --- Gemini
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3. Activity Diagram (Swimlanes)</h2>
+      <p>Swimlane workflow across the Traveler, the Plan B System Engine, and the Gemini Agent, covering privacy boundaries, guardrail stops, and slot-only replanning.</p>
+      <div class="mermaid">
+flowchart TD
+  subgraph MEMBER["👤 Traveler / Trip Member"]
+    Start(["Start"]) --> Auth["Login / Register<br/>(No seed users)"]
+    Auth --> Profile["Update Profile Defaults<br/>(Pace, Dietary, Friends list)"]
+    Profile --> RoomAction{"Create or Join Trip?"}
+    RoomAction -->|Create Solo or Group| Create["Create Empty Trip Room"]
+    RoomAction -->|Join via Share Link| JoinLink["Join Trip via Link<br/>(No prior friendship required)"]
+    RoomAction -->|Join via Friend Invite| JoinFriend["Accept Friend Invite"]
+
+    Create --> FillPrefs["Submit Member Preference Form<br/>(Where, dates, budget cap, pace,<br/>interests, deal-breakers, must-visit)"]
+    JoinLink --> FillPrefs
+    JoinFriend --> FillPrefs
+
+    FillPrefs --> HideToggle{"Hide Destination?"}
+    HideToggle -->|Yes| MarkHidden["Toggle 'Hide from members'<br/>(Omitted from shared map pins)"]
+    HideToggle -->|No| MarkPublic["Keep Destination Public"]
+
+    MarkHidden --> TapMap["Tap Map to Drop Place Pin<br/>(Saves Lat/Lng; no geocoding)"]
+    MarkPublic --> TapMap
+
+    TapMap --> CheckAlign["Review Group Alignment Dashboard"]
+  end
+
+  subgraph SYSTEM["⚙️ Plan B System Engine"]
+    CheckAlign --> RunAlign["Compute Alignment Metrics:<br/>1. Find date overlap windows<br/>2. Budget ceiling = lowest individual cap<br/>3. Aggregate shared deal-breakers"]
+    RunAlign --> DestConfirm{"Destination Confirmed<br/>by Group?"}
+    DestConfirm -->|No| CheckAlign
+    DestConfirm -->|Yes| ValidatePlaces{"Member-Added Place IDs > 0?"}
+  end
+
+  subgraph GEMINI["🤖 Trip-Scoped Gemini Agent"]
+    ValidatePlaces -->|No| Halt["STOP SCHEDULING<br/>(Zero fake venues or prices invented.<br/>Prompts members to add places)"]
+    Halt -.-> TapMap
+
+    ValidatePlaces -->|Yes| IngestData["Ingest Trip Data Server-Side:<br/>- Allowed place IDs<br/>- Hidden destination (Secretly)<br/>- Group budget cap & Pace"]
+    IngestData --> ScheduleDays["Generate Day-by-Day Itinerary<br/>(Restricted to existing place IDs;<br/>NEVER reveals hidden destination name)"]
+  end
+
+  subgraph TRIP_MONEY["🚀 Trip Execution & Expense Settlement"]
+    ScheduleDays --> SwitchTrip["Switch to Trip Mode"]
+    SwitchTrip --> NextStop["Display Next Stop & Countdown"]
+
+    NextStop --> EventCheck{"Trip Status"}
+    EventCheck -->|Normal Progress| LogSpend["Log Actual Expense<br/>on Itinerary Item"]
+    EventCheck -->|Disruption Occurs| MarkIssue["Mark Slot: Delay / Cannot Go"]
+
+    MarkIssue --> LockTrip["Lock Remaining Itinerary:<br/>Flights & booked stays untouched"]
+    LockTrip --> ReplanSlot["Gemini: Replan ONLY Disrupted Slot<br/>using available valid place IDs"]
+    ReplanSlot --> NextStop
+
+    LogSpend --> DebtCalc["Calculate Debt Graph:<br/>Settle who owes whom (No live fares)"]
+    DebtCalc --> EndTrip(["Trip Complete & Settled"])
+  end
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>4. User Flow</h2>
+      <p>13-screen end-to-end user experience flow showing prerequisite checks, Plan vs. Trip mode, and the persistent 5-tab bottom navigation bar.</p>
+      <div class="mermaid">
+flowchart TD
+  S00["00 Splash<br/>Icon & Slogan"] --> S01["01 Login / Register<br/>No seed users"]
+  S01 --> S02["02 Trips<br/>Room list; allowed empty"]
+  S02 --> S03["03 Trip Home<br/>Switch Plan / Trip mode"]
+  S03 --> S11["11 Invite<br/>Copy link or friend invite"]
+  S03 --> S04["04 Preference Form<br/>Dates, cap, pace, deal-breakers, hidden toggle"]
+  S04 --> S05["05 Map<br/>Public pins; tap map for lat/lng"]
+  S05 --> AlignChk{"Destination confirmed &<br/>places added?"}
+  AlignChk -->|No| S04
+  AlignChk -->|Yes| S09["09 Agent<br/>Gemini arranges existing IDs"]
+  S09 --> S06["06 Itinerary<br/>Day-by-day real places"]
+  S06 --> S07["07 Trip Mode<br/>Next stop & quick updates"]
+  S07 --> DisCheck{"Delay or cannot go?"}
+  DisCheck -->|Yes| S12["12 Replan<br/>Patch only affected slot;<br/>locked stays unchanged"]
+  S12 --> S07
+  DisCheck -->|No| S08["08 Money<br/>Log item spend & split balances"]
+  S03 --> S10["10 Profile<br/>Default pace, dietary, friends"]
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>5. Idea Evolution</h2>
+      <p>Architectural progression dropping sources of untrue data at each pivot.</p>
+      <div class="mermaid">
+flowchart LR
+  V1["V1: Map + Booking APIs"] --> V2["V2: No Booking APIs<br/>Still Nominatim Geocoding"]
+  V2 --> V3["V3 FINAL: Plan B<br/>Tap-to-Pin + Constrained Gemini"]
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>6. Alternative Ideas Comparison</h2>
+      <p>Why a collaborative, constrained workspace succeeds where booking super-apps and generic chat bots fail.</p>
+      <div class="mermaid">
+flowchart TB
+  Q["Challenge: How to synchronize a group trip and adapt mid-way?"]
+  Q --> A["A. Booking Super-App"]
+  Q --> B["B. Conversational Itinerary Bot"]
+  Q --> C["C. Plan B Workspace (Chosen)"]
+
+  A --> A1["Strong on inventory<br/>Weak on group caps and slot replanning"]
+  B --> B1["Fast day lists<br/>Invented fake shops; no shared ceiling"]
+  C --> C1["Structured forms + tapped pins + constrained Gemini<br/>Truthful, resilient, slot-level replan"]
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>7. Mindmap</h2>
+      <p>High-density, fully validated Mermaid mindmap capturing the complete Plan B system topology across 8 cohesive structural pillars.</p>
+      <div class="mermaid">
+mindmap
+  root((Plan B PWA))
+    Users and Collaboration
+      Target audience
+        University students
+        Small friend groups
+        Short phone-first trips
+      Room lifecycle
+        Solo trip room
+        Group collaboration room
+        Join by share link without friending
+        Invite from friends list
+        Trip list allowed empty initially
+      Identity and profiles
+        Clean registration and login
+        Zero preloaded mock users
+        Profile defaults
+          Default travel pace
+          Dietary restrictions
+          Friends entry
+    Preference Gathering
+      Individual preference form
+        Destination wishlist
+        Available travel dates
+        Personal budget ceiling
+        Pace preference
+        Specific interests
+        Dislikes and deal-breakers
+        Must-visit places
+      Hidden destination feature
+        Destination marked hidden from peers
+        No pins dropped on shared map
+        Ingested privately by Gemini server-side
+        Gemini strictly forbidden to speak name
+    Alignment and Scheduling
+      Alignment calculation
+        Date overlap window discovery
+        Group budget ceiling equals lowest cap
+        Shared deal-breaker aggregation
+      Itinerary sequencing
+        Confirm destination lock prerequisite
+        Sequence days strictly using existing places
+    Constrained Gemini Agent
+      Trip-scoped architecture
+        One dedicated agent per trip room
+        Reads only this trip database rows
+      Strict grounding guardrails
+        Schedules existing place IDs only
+        Halt execution if zero places exist
+        Zero invented venue names
+        Zero invented prices
+    Dual Operating Modes
+      Plan Mode
+        Group preference synchronization
+        Destination confirmation
+        Day-by-Day itinerary generation
+      Trip Mode
+        Live countdown to next stop
+        One-tap delay or cannot-go flag
+        Slot-only replanning engine
+          Patches only the disrupted hour
+          Locked flights and stays remain fixed
+    Map and Money Ledgers
+      Display map engine
+        Leaflet with OpenStreetMap tiles
+        Tap map to save lat and lng directly
+        Displays public pins only
+        Zero geocoding API dependencies
+        Empty inputs produce empty map
+      Expense and split ledger
+        Log actual spend on itinerary items
+        Automated who-owes-whom debt graph
+        Instant net balance settlement
+        No live dynamic ticket fare scraping
+    PWA Interface and Screens
+      PWA mobile architecture
+        390px mobile phone width
+        Five bottom navigation tabs
+          Trips tab
+          Map tab
+          Plan tab
+          Money tab
+          You tab
+      Thirteen core screens
+        00 Splash brand icon and slogan
+        01 Login and Register
+        02 Trips room list
+        03 Trip Home alignment hub
+        04 Preference Form
+        05 Map public pins
+        06 Day-by-Day Itinerary
+        07 Trip Mode live tracking
+        08 Money ceiling and splits
+        09 Agent Gemini chat
+        10 Profile defaults and dietary
+        11 Invite via link or friend
+        12 Replan single disrupted slot
+    Explicit Anti-Features
+      No fake or seeded demo data
+      No flight or hotel booking checkouts
+      No auto nearby venue scraper
+      No live dynamic fare lookup
+      </div>
+    </div>
+  </div>
+</body>
+</html>
