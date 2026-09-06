@@ -132,7 +132,7 @@ flowchart LR
 
   subgraph Boundary["System Boundary: Plan B PWA Workspace"]
     subgraph UC_Auth["1. Account & Profile"]
-      UC01(["UC01: Register & Login<br/>(No mock/seed accounts)"]):::usecase
+      UC01(["UC01: Register & Login<br/>(Supabase Auth)"]):::usecase
       UC02(["UC02: Manage Profile<br/>(Default pace, dietary, friends)"]):::usecase
     end
 
@@ -195,7 +195,7 @@ flowchart LR
 
 | Use Case ID | Name | Actor(s) | Preconditions & Business Rules |
 | :--- | :--- | :--- | :--- |
-| **UC01** | Register & Login | Traveler | Clean user authentication via Supabase Auth. Zero pre-seeded or fake users. |
+| **UC01** | Register & Login | Traveler | Clean user authentication via Supabase Auth. |
 | **UC02** | Manage Profile | Traveler | Sets personal defaults for travel pace, dietary requirements, and friend connections. |
 | **UC03** | Create / View Room | Traveler | Can create solo trips or group rooms. Trips list is allowed to be empty initially. |
 | **UC04** | Join via Share Link | Traveler | Anyone with the link can join; mutual friending is explicitly not required. |
@@ -222,7 +222,7 @@ flowchart LR
 ```mermaid
 flowchart TD
   subgraph MEMBER["👤 Traveler / Trip Member"]
-    Start(["Start"]) --> Auth["Login / Register<br/>(No seed users)"]
+    Start(["Start"]) --> Auth["Login / Register<br/>(Supabase Auth)"]
     Auth --> Profile["Update Profile Defaults<br/>(Pace, Dietary, Friends list)"]
     Profile --> RoomAction{"Create or Join Trip?"}
     RoomAction -->|Create Solo or Group| Create["Create Empty Trip Room"]
@@ -472,7 +472,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  S00["00 Splash<br/>Icon & Slogan"] --> S01["01 Login / Register<br/>No seed users"]
+  S00["00 Splash<br/>Icon & Slogan"] --> S01["01 Login / Register<br/>Supabase Auth"]
   S01 --> S02["02 Trips<br/>Room list; allowed empty"]
   S02 --> S03["03 Trip Home<br/>Switch Plan / Trip mode"]
   S03 --> S11["11 Invite<br/>Copy link or friend invite"]
@@ -508,7 +508,7 @@ flowchart LR
 | :--- | :--- | :--- | :--- |
 | **V1: Booking Super-App** | Integrated live flight, hotel, and attraction booking APIs | API keys fail, rate limits hit, and failure modes produce fake prices and broken demo flows. | In-app ticket checkout, dynamic live fares, fake availability counters. |
 | **V2: Fragile Geocoding** | Free-text search geocoded via public Nominatim / Google Places | Public Nominatim enforces 1 req/s, fails on informal names, and drops pins in the wrong country. | Unreliable commercial geocoding APIs and misplaced coordinate pins. |
-| **V3 (Final Production Stack): Plan B on Vercel + Supabase** | Nuxt 3 (Nitro) on Vercel Serverless + Supabase (PostgreSQL with RLS, Auth, Realtime CDC) + Leaflet OSM & Photon geocoder + Scoped Gemini Agent. | 100% buildable, native Vue SSR hydration, battle-tested PostgreSQL RLS isolation, instant managed websockets for group chat, fast fuzzy OSM autocomplete, and 0-place halt guardrail. | Hallucinated shops, invented venue names, seed cities, fake reviews, checkout API drop-offs, and state synchronization leaks. |
+| **V3 (Final Production Stack): Plan B on Vercel + Supabase** | Nuxt 3 (Nitro) on Vercel Serverless + Supabase (PostgreSQL with RLS, Auth, Realtime CDC) + Leaflet OSM & Photon geocoder + Scoped Gemini Agent. | 100% buildable, native Vue SSR hydration, battle-tested PostgreSQL RLS isolation, instant managed websockets for group chat, fast fuzzy OSM autocomplete, and 0-place halt guardrail. | Hallucinated shops, invented venue names, fake reviews, checkout API drop-offs, and state synchronization leaks. |
 
 ---
 
@@ -652,7 +652,6 @@ mindmap
       Maps Leaflet and OpenStreetMap tiles
       Hosting Vercel and Supabase
     Explicit Anti-Features
-      No fake or seeded demo data
       No flight or hotel booking checkouts
       No auto nearby venue scraper
       No live dynamic fare lookup
@@ -670,7 +669,7 @@ Plan B System Topology
 ├── 6. Map & Money Ledgers: Photon search + tap-to-pin (open-source OSM) | Itemized spend | Debt graph who-owes-whom (no live fares)
 ├── 7. PWA Interface & Screens: 390px mobile layout | 6 bottom tabs (Trips, Map, Plan, Money, You, Chat) | 14 screens (00-13)
 ├── 8. System Tech Stack: Nuxt 3 + Vue 3 | Nitro Server | Drizzle ORM | Supabase (RLS, Realtime) | Gemini | Leaflet OSM | Vercel
-└── 9. Explicit Anti-Features: No seed users/trips | No booking checkout APIs | No auto venue scraping | No dynamic fares
+└── 9. Explicit Anti-Features: No booking checkout APIs | No auto venue scraping | No dynamic fares
 ```
 
 ---
@@ -829,6 +828,5 @@ To ensure 100% technical feasibility, the scope for the build phase is strictly 
 
 #### Out-of-Scope (Explicit Anti-Features):
 - ❌ **Commercial Flight & Hotel Booking APIs:** No live ticket checkouts or dynamic inventory scrapers. Bookings are represented as user-entered, locked anchor items.
-- ❌ **Mock Demo Seed Data:** No pre-seeded fake users, sample trips, or canned venue reviews; the app operates entirely on user-entered data.
 - ❌ **Nearby Auto-Scrapers:** The app never pulls unverified external restaurant lists; it schedules only venues intentionally added by travelers.
-- ❌ **Dynamic Currency Fare Speculation:** Expense splitting is based on actual logged receipts, not speculative live foreign exchange scrapers.\n
+- ❌ **Dynamic Currency Fare Speculation:** Expense splitting is based on actual logged receipts, not speculative live foreign exchange scrapers.
