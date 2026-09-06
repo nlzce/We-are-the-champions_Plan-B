@@ -39,7 +39,7 @@ Plan B is a phone-first Progressive Web App (PWA) and grounded AI assistant desi
 
 #### Core Feature-Set:
 1. **Clean Identity & Rooms:** Lightweight authentication via Supabase Auth. Solo or group trip rooms can start completely empty without preloaded mock data.
-2. **7-Parameter Preference Form:** Gathers destination ideas, travel dates, personal budget caps, preferred travel pace (relaxed, balanced, or intense), interests, deal-breakers, and must-visit spots.
+2. **4-Step Preference Intake:** Gathers destination wishlist (with optional privacy toggle), travel date windows, personal budget limits with pace preferences, and interests with deal-breakers.
 3. **Hidden Destination Privacy Toggle:** Allows a traveler to keep a destination suggestion private from peers for surprise trips. It never drops a pin on the shared map; only the trip's Gemini agent reads it server-side to build the route without revealing its name.
 4. **Automated Alignment Engine:** Automatically calculates overlapping date windows, aggregates deal-breakers, locks the group budget ceiling to the lowest member cap (`min(individual caps)`), and requires destination confirmation before itinerary generation unlocks.
 5. **Grounded Dual-Mode Map:** Displays only public, member-added places. Travelers can search places with fast Photon fuzzy autocomplete or tap directly on the map to pin custom coordinates.
@@ -49,6 +49,9 @@ Plan B is a phone-first Progressive Web App (PWA) and grounded AI assistant desi
 9. **Itinerary-Tied Debt Ledger:** Expenses are logged directly against specific itinerary stops, automatically generating a minimal-transaction "who owes whom" debt graph.
 10. **Real-Time Team Group Chat:** In-room messaging powered by Supabase Realtime where members can chat, share interactive place cards, and receive automatic broadcast alerts for replanned stops and logged expenses.
 11. **Mobile PWA Interface:** Built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), optimized for quick one-handed mobile interactions.
+
+#### The Core PWA Journey:
+`Register / Login → Create trip or join with code → Individual members fill preferences (with optional hidden destination) & align → Confirm destination → Map pins + Itinerary + AI Agent sequences real pins → Team group chat coordination → Money expense logging (even / custom split) → Live Trip Mode (Done / Delay) → Single-slot Replan.`
 
 ---
 
@@ -198,9 +201,9 @@ flowchart LR
 | **UC01** | Register & Login | Traveler | Clean user authentication via Supabase Auth. |
 | **UC02** | Manage Profile | Traveler | Sets personal defaults for travel pace, dietary requirements, and friend connections. |
 | **UC03** | Create / View Room | Traveler | Can create solo trips or group rooms. Trips list is allowed to be empty initially. |
-| **UC04** | Join via Share Link | Traveler | Anyone with the link can join; mutual friending is explicitly not required. |
+| **UC04** | Join via Share Link | Traveler | Anyone with the link or code can join; mutual friending is explicitly not required. |
 | **UC05** | Invite from Friends | Traveler | Invites travelers directly from the user's friend connection list. |
-| **UC06** | Submit Preference Form | Traveler | Submits destination wish, date window, budget ceiling, pace, interests, deal-breakers, and must-visits. |
+| **UC06** | Submit Preference Form | Traveler | 4-step wizard: destination, date window, budget ceiling with pace, interests and deal-breakers. |
 | **UC07** | Set Hidden Destination | Traveler | Destination toggle hides the place from peers and map display. Only Gemini reads it server-side. |
 | **UC08** | Add Place (Search / Tap) | Traveler | Search places with Photon fuzzy autocomplete (OSM) or tap map to drop custom pin without external booking dependencies. |
 | **UC09** | View Group Alignment | Traveler | Displays computed date overlaps, the group budget ceiling (`min(individual caps)`), and deal-breakers. |
@@ -210,8 +213,8 @@ flowchart LR
 | **UC13** | View Next Stop | Traveler | Displays current stop, arrival time, and live countdown in Trip Mode. |
 | **UC14** | Mark Delay / Cannot-Go | Traveler | Flags a specific itinerary slot as disrupted during transit. |
 | **UC15** | Replan Single Slot | Gemini Agent | Rewrites only the affected time block using remaining valid place IDs. Locked stays and flights remain fixed. |
-| **UC16** | Log Itemized Expense | Traveler | Logs actual spend tied directly to an itinerary item. |
-| **UC17** | Settle Who-Owes-Whom | Traveler | Computes debt graph and minimal transfers without dynamic ticket lookup. |
+| **UC16** | Log Itemized Expense | Traveler | Logs actual spend tied directly to an itinerary item with even or custom splitting. |
+| **UC17** | Settle Who-Owes-Whom | Traveler | Computes debt graph and minimal transfers via Balance Equalizer without dynamic ticket lookup. |
 | **UC18** | Team Group Chat | Traveler | Real-time chat powered by Supabase Realtime; share place cards, discuss plans, and receive live system disruption alerts. |
 
 ---
@@ -225,29 +228,29 @@ flowchart TD
     Start(["Start"]) --> Auth["Login / Register<br/>(Supabase Auth)"]
     Auth --> Profile["Update Profile Defaults<br/>(Pace, Dietary, Friends list)"]
     Profile --> RoomAction{"Create or Join Trip?"}
-    RoomAction -->|Create Solo or Group| Create["Create Empty Trip Room"]
-    RoomAction -->|Join via Share Link| JoinLink["Join Trip via Link<br/>(No prior friendship required)"]
+    RoomAction -->|Create Solo or Group| Create["Create Empty Trip Room<br/>('Penang with the gang')"]
+    RoomAction -->|Join via Share Code / Link| JoinLink["Join Trip via Code: 688422<br/>(No prior friendship required)"]
     RoomAction -->|Join via Friend Invite| JoinFriend["Accept Friend Invite"]
 
-    Create --> FillPrefs["Submit Member Preference Form<br/>(Where, dates, budget cap, pace,<br/>interests, deal-breakers, must-visit)"]
+    Create --> FillPrefs["Submit 4-Step Preference Form<br/>(Destination, dates, budget cap,<br/>pace, interests, deal-breakers)"]
     JoinLink --> FillPrefs
     JoinFriend --> FillPrefs
 
     FillPrefs --> HideToggle{"Hide Destination?"}
-    HideToggle -->|Yes| MarkHidden["Toggle 'Hide from members'<br/>(Omitted from shared map pins)"]
-    HideToggle -->|No| MarkPublic["Keep Destination Public"]
+    HideToggle -->|Yes: Secret Wishlist| MarkHidden["Toggle 'Hide from group'<br/>(Omitted from shared map pins)"]
+    HideToggle -->|No: Public Suggestion| MarkPublic["Keep Destination Public"]
 
-    MarkHidden --> AddPlace["Add Place: Search via Photon<br/>OR Tap Map for Custom Pin"]
+    MarkHidden --> AddPlace["Add Places: Search via Photon<br/>OR Tap Map for Custom Coordinates"]
     MarkPublic --> AddPlace
 
-    AddPlace --> CheckAlign["Review Group Alignment Dashboard"]
+    AddPlace --> CheckAlign["Review Group Alignment Dashboard<br/>(Alex, Jamie, Sam, Riley)"]
   end
 
   subgraph SYSTEM["⚙️ Plan B System Engine"]
     CheckAlign --> RunAlign["Compute Alignment Metrics:<br/>1. Find date overlap windows<br/>2. Budget ceiling = lowest individual cap<br/>3. Aggregate shared deal-breakers"]
     RunAlign --> DestConfirm{"Destination Confirmed<br/>by Group?"}
     DestConfirm -->|No| CheckAlign
-    DestConfirm -->|Yes| ValidatePlaces{"Member-Added Place IDs > 0?"}
+    DestConfirm -->|Yes: 'Penang, Malaysia'| ValidatePlaces{"Member-Added Place IDs > 0?"}
   end
 
   subgraph GEMINI["🤖 Trip-Scoped Gemini Agent"]
@@ -260,17 +263,17 @@ flowchart TD
 
   subgraph TRIP_MONEY["🚀 Trip Execution & Expense Settlement"]
     ScheduleDays --> SwitchTrip["Switch to Trip Mode"]
-    SwitchTrip --> NextStop["Display Next Stop & Countdown"]
+    SwitchTrip --> NextStop["Display Next Stop & Countdown<br/>(Kek Lok Si Temple · 09:00)"]
 
     NextStop --> EventCheck{"Trip Status"}
-    EventCheck -->|Normal Progress| LogSpend["Log Actual Expense<br/>on Itinerary Item"]
-    EventCheck -->|Disruption Occurs| MarkIssue["Mark Slot: Delay / Cannot Go"]
+    EventCheck -->|Normal Progress| LogSpend["Log Expense on Itinerary Item<br/>(Even or Custom Split)"]
+    EventCheck -->|Disruption Occurs| MarkIssue["Mark Slot: Delay / Cannot Go<br/>(e.g. Heavy rain at Air Itam)"]
 
     MarkIssue --> LockTrip["Lock Remaining Itinerary:<br/>Flights & booked stays untouched"]
     LockTrip --> ReplanSlot["Gemini: Replan ONLY Disrupted Slot<br/>using available valid place IDs"]
     ReplanSlot --> NextStop
 
-    LogSpend --> DebtCalc["Calculate Debt Graph:<br/>Settle who owes whom (No live fares)"]
+    LogSpend --> DebtCalc["Calculate Debt Graph:<br/>Balance Equalizer who-owes-whom"]
     DebtCalc --> EndTrip(["Trip Complete & Settled"])
   end
 ```
@@ -284,21 +287,21 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  M1["Member A Form<br/>Dates: Oct 12-16 · Cap: RM 600 · Pace: Moderate"] --> Engine["Alignment Calculation Engine"]
-  M2["Member B Form<br/>Dates: Oct 11-15 · Cap: RM 450 · Pace: Balanced"] --> Engine
-  M3["Member C Form<br/>Dates: Oct 12-15 · Cap: RM 800 · Pace: Relaxed"] --> Engine
+  M1["Alex (Host) Form<br/>Dates: Oct 10-15 · Cap: RM 2000 · Pace: Easy"] --> Engine["Alignment Calculation Engine"]
+  M2["Jamie Form<br/>Dates: Oct 10-15 · Cap: RM 800 · Pace: Balanced"] --> Engine
+  M3["Riley Form<br/>Dates: Oct 10-14 · Cap: RM 450 · Pace: Relaxed"] --> Engine
 
-  Engine --> CalcDate["Calculate Date Intersection<br/>Overlap Window: Oct 12 - 15 (4 Days)"]
-  Engine --> CalcCap["Calculate Group Budget Ceiling<br/>min(600, 450, 800) = RM 450 / pax<br/>(Lowest cap protects lowest spender)"]
-  Engine --> CalcBreakers["Aggregate Deal-Breakers<br/>Merged: No seafood · No 7am wakeups"]
+  Engine --> CalcDate["Calculate Date Intersection<br/>Overlap Window: Oct 10 - 14 (5 Days)"]
+  Engine --> CalcCap["Calculate Group Budget Ceiling<br/>min(2000, 800, 450) = RM 450 / person<br/>(Lowest cap protects lowest spender)"]
+  Engine --> CalcBreakers["Aggregate Deal-Breakers<br/>Merged: No 4am starts · No heavy museums"]
 
-  CalcDate --> AlignCard["Render Group Alignment Card<br/>(4/4 Members Completed)"]
+  CalcDate --> AlignCard["Render Group Alignment Summary<br/>(Date Overlap, Cap RM 450, Prefs in: 3/4)"]
   CalcCap --> AlignCard
   CalcBreakers --> AlignCard
 
   AlignCard --> LockCheck{"Group Confirmed<br/>Destination?"}
   LockCheck -->|No| Pending["Display Lock Badge: Pending Confirmation<br/>Itinerary generation remains locked"]
-  LockCheck -->|Yes| Locked["Display Lock Badge: Destination Confirmed ✓<br/>Unlock Itinerary Generation Button"]
+  LockCheck -->|Yes: Penang, Malaysia| Locked["Display Lock Badge: Destination Confirmed ✓<br/>Unlock Itinerary Generation Button"]
 ```
 
 ---
@@ -308,17 +311,17 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  User["Traveler (Member A)"] --> InputDest["Input Wishlist: 'Surprise Beach Villa'"]
-  InputDest --> Toggle["Toggle: [ Hide Destination from Group ]"]
+  User["Traveler (Alex)"] --> InputDest["Input Destination: 'Kyoto'"]
+  InputDest --> Toggle["Toggle: [ Hide from group (Only AI uses this for planning) ]"]
   
-  Toggle --> ClientUI["Client UI State (Member A)"]
+  Toggle --> ClientUI["Client UI State (Alex)"]
   Toggle --> ServerAPI["Server API: /api/preferences/submit"]
 
   ServerAPI --> DB[(Supabase PostgreSQL)]
   DB --> RLS["Row-Level Security (RLS) Policy<br/>is_hidden = true"]
 
-  RLS -->|Peers: Member B and C| BlockPeers["Map Query: Excluded from pins<br/>Peers cannot see coordinate or venue name"]
-  RLS -->|Member A: Owner| AllowOwner["Member A can see private indicator badge"]
+  RLS -->|Peers: Jamie, Sam, Riley| BlockPeers["Map Query: Excluded from pins<br/>Peers cannot see coordinate or venue name"]
+  RLS -->|Member: Alex| AllowOwner["Alex sees private indicator badge"]
 
   DB --> ServerGemini["Trip-Scoped Gemini Server Route<br/>(Reads is_hidden destination securely)"]
   ServerGemini --> Prompt["System Instruction Guardrail:<br/>'Factor in private destination characteristics,<br/>but NEVER state its name in outputs.'"]
@@ -334,7 +337,7 @@ flowchart TD
 flowchart TD
   UserAction{"How Traveler Adds Place"}
   
-  UserAction -->|Type in Search Bar| SearchInput["Search Query: 'Toh Soon Cafe'"]
+  UserAction -->|Type in Search Bar| SearchInput["Search Query: 'Tek Sen Restaurant'"]
   SearchInput --> PhotonAPI["Photon Fuzzy Geocoder API<br/>(OpenStreetMap by Komoot)"]
   PhotonAPI --> AutocompleteList["Dropdown Autocomplete List<br/>Real venues with address & district"]
   AutocompleteList --> SelectResult["Traveler selects search result"]
@@ -345,8 +348,8 @@ flowchart TD
   ClickCoords --> PromptName["Prompt traveler for venue label & tag"]
   PromptName --> ExtractCoords
 
-  ExtractCoords --> SaveDB["Write to Supabase: trip_places table<br/>(trip_id, name, lat, lng, added_by, cost_est)"]
-  SaveDB --> RenderMap["Render Custom Numbered Pin on Map<br/>(Pin 1, Pin 2, Pin 3...)"]
+  ExtractCoords --> SaveDB["Write to Supabase: trip_places table<br/>(trip_id, name, lat, lng, added_by)"]
+  SaveDB --> RenderMap["Render Numbered Pin on Map<br/>(Pin 1, Pin 2, Pin 3...)"]
   RenderMap --> Drawer["Open Bottom Drawer Sheet:<br/>Place Details + '+ Add to Itinerary Pool'"]
 ```
 
@@ -363,10 +366,10 @@ flowchart TD
   CountCheck -->|No: Count == 0| HaltBranch["🛑 HARD STOP GUARDRAIL TRIGGERED<br/>Zero places exist in trip pool"]
   HaltBranch --> HaltResponse["Return UI Warning:<br/>'Cannot generate schedule: 0 places in pool.<br/>Please add places via Map or Form first.'<br/>(Zero invented venues or fake prices)"]
 
-  CountCheck -->|Yes: Count > 0| PreparePayload["Prepare Grounded Agent Payload:<br/>- Allowed Place IDs: [id_1, id_2, id_3...]<br/>- Group Budget Cap: RM 450<br/>- Group Pace: Balanced"]
+  CountCheck -->|Yes: Count > 0| PreparePayload["Prepare Grounded Agent Payload:<br/>- Allowed Place IDs: [Tek Sen, Kek Lok Si, Penang Hill...]<br/>- Group Budget Cap: RM 450<br/>- Group Pace: Easy"]
   PreparePayload --> GeminiCall["Call Google Gemini API<br/>(Enforce JSON Mode & Place ID Schema)"]
   GeminiCall --> ValidateJSON["Server-side JSON Schema Validation:<br/>Verify all returned IDs exist in allow-list"]
-  ValidateJSON --> WriteDays["Write rows to trip_itinerary table<br/>(Day 1, Day 2, Day 3 with verified IDs)"]
+  ValidateJSON --> WriteDays["Write rows to trip_itinerary table<br/>(Day 1, Day 2 with verified IDs)"]
 ```
 
 ---
@@ -376,23 +379,23 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  TripMode["Live Trip Mode Active<br/>Countdown: 'NEXT STOP IN 28 MINS'"] --> Disruption{"Disruption Occurs<br/>on active slot (10:30 AM)"}
+  TripMode["Live Trip Mode Active (Penang)<br/>NEXT STOP: Kek Lok Si Temple (09:00)"] --> Disruption{"Disruption Occurs<br/>on active slot (09:00 AM)"}
 
-  Disruption -->|Member taps Delay| DelayBtn["⚠️ Delayed (+30m)"]
+  Disruption -->|Member taps Delay| DelayBtn["⚠️ Delayed (+30m)<br/>Reason: Heavy rain at Air Itam"]
   Disruption -->|Member taps Cannot Go| SkipBtn["❌ Cannot Go / Closed"]
 
   DelayBtn --> ReplanTrigger["Trigger Single-Slot Replan Engine"]
   SkipBtn --> ReplanTrigger
 
-  ReplanTrigger --> LockStays["🔒 LOCK INTEGRITY ENFORCEMENT:<br/>- 05:00 PM Hotel Check-in: LOCKED<br/>- Return Flight: LOCKED<br/>(Never shifted or modified)"]
+  ReplanTrigger --> LockStays["🔒 LOCK INTEGRITY ENFORCEMENT:<br/>- Booked Hotel Check-in: LOCKED<br/>- Return Flights: LOCKED<br/>(Never shifted or modified)"]
 
   LockStays --> QueryPool["Query unused places from trip_places pool"]
-  QueryPool --> GeminiReplan["Gemini: Replan ONLY 10:30 AM Slot<br/>Constraints: Fits into 2hr window before Hotel Check-in<br/>Remaining budget under RM 450 cap"]
+  QueryPool --> GeminiReplan["Gemini: Replan ONLY Disrupted 09:00 Slot<br/>Constraints: Fits into morning window<br/>Remaining budget under RM 450 cap"]
 
-  GeminiReplan --> ReturnOptions["Generate 3 Replacement Candidates:<br/>1. Cheong Fatt Tze Mansion (Heritage, 15m away)<br/>2. Penang Museum (Free entry, 8m away)<br/>3. ChinaHouse Rest (Cafe break)"]
+  GeminiReplan --> ReturnOptions["Generate Replacement Candidates:<br/>1. Penang State Museum (Indoor, free entry)<br/>2. ChinaHouse Cafe (Indoor heritage cafe)<br/>3. Cheong Fatt Tze Blue Mansion"]
 
-  ReturnOptions --> ReplanModal["Display Single-Slot Replan Modal<br/>(Highlights disrupted slot in red,<br/>locked stays in green, 3 options)"]
-  ReplanModal --> UserConfirm["User selects Option 1 & confirms"]
+  ReturnOptions --> ReplanModal["Display Mid-Trip Replan Modal<br/>(Highlights delayed slot in yellow,<br/>locked stays unchanged)"]
+  ReplanModal --> UserConfirm["User selects candidate & applies replan"]
   UserConfirm --> PatchSlot["Update ONLY that single slot in DB<br/>Resume Live Trip Mode"]
 ```
 
@@ -403,26 +406,26 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  Log1["Expense 1: RM 60 Breakfast<br/>Paid by Alex · Split 4 ways (RM 15 each)"] --> Ledger["Trip Expense Ledger"]
-  Log2["Expense 2: RM 100 Tickets<br/>Paid by Sarah · Split 4 ways (RM 25 each)"] --> Ledger
+  Log1["Expense 1: RM 240 Rooftop Drinks<br/>Paid by Alex · Custom Split (Riley RM 0)"] --> Ledger["Trip Expense Ledger<br/>TOTAL SPENT RM 368.50"]
+  Log2["Expense 2: RM 128.50 Grab Rides<br/>Paid by Jamie · Even Split 4 ways"] --> Ledger
 
   Ledger --> NetCalc["Calculate Net Balance for Each Member:<br/>Net = Total Paid - Fair Share"]
   
-  NetCalc --> B1["Alex: Paid RM 60, Share RM 40 ➔ Net: +RM 20"]
-  NetCalc --> B2["Sarah: Paid RM 100, Share RM 40 ➔ Net: +RM 60"]
-  NetCalc --> B3["Bob: Paid RM 0, Share RM 40 ➔ Net: -RM 40"]
-  NetCalc --> B4["Ken: Paid RM 0, Share RM 40 ➔ Net: -RM 40"]
+  NetCalc --> B1["Alex: Paid RM 240.00 ➔ Net: +RM 147.87 (Gets)"]
+  NetCalc --> B2["Jamie: Paid RM 128.50 ➔ Net: +RM 36.37 (Gets)"]
+  NetCalc --> B3["Sam: Paid RM 0.00 ➔ Net: -RM 92.12 (Owes)"]
+  NetCalc --> B4["Riley: Paid RM 0.00 ➔ Net: -RM 92.12 (Owes)"]
 
   B1 --> GraphSolve["Greedy Debt Simplification Algorithm<br/>(Minimizes total transaction count)"]
   B2 --> GraphSolve
   B3 --> GraphSolve
   B4 --> GraphSolve
 
-  GraphSolve --> Settle1["Transaction 1: Bob pays Alex RM 20"]
-  GraphSolve --> Settle2["Transaction 2: Bob pays Sarah RM 20"]
-  GraphSolve --> Settle3["Transaction 3: Ken pays Sarah RM 40"]
+  GraphSolve --> Settle1["Transaction 1: Sam pays Alex RM 92.12"]
+  GraphSolve --> Settle2["Transaction 2: Riley pays Alex RM 55.75"]
+  GraphSolve --> Settle3["Transaction 3: Riley pays Jamie RM 36.37"]
 
-  Settle1 --> UI["Render Who-Owes-Whom UI Cards<br/>with '[ Mark Paid ]' Buttons"]
+  Settle1 --> UI["Render Balance Equalizer UI Cards<br/>with '[ Mark Paid ]' Buttons"]
   Settle2 --> UI
   Settle3 --> UI
 ```
@@ -435,60 +438,71 @@ flowchart TD
 ```mermaid
 flowchart TD
   subgraph ROOM_CLIENTS["Connected Trip Room Members (Mobile PWA)"]
-    ClientA["Member A (Alex)"]
-    ClientB["Member B (Sarah)"]
-    ClientC["Member C (Bob)"]
+    ClientA["Alex (Host)"]
+    ClientB["Jamie"]
+    ClientC["Sam"]
+    ClientD["Riley"]
   end
 
-  subgraph SUPABASE_RT["Supabase Realtime Engine (Channel: 'trip_room:123')"]
+  subgraph SUPABASE_RT["Supabase Realtime Engine (Channel: 'trip_room:penang')"]
     Broadcaster["WebSocket Broadcast Hub"]
   end
 
   subgraph EVENTS["Event Triggers inside Trip Room"]
-    HumanMsg["Human Message: 'Ready to leave hotel?'"]
-    SharePlace["Share Place Pin: 'Let's go to Toh Soon Cafe'"]
-    ReplanAlert["⚡ System Alert: '10:30 AM slot patched to Blue Mansion'"]
-    SpendAlert["💵 System Alert: 'Sarah logged RM 100 for Mansion Tickets'"]
+    HumanMsg["Jamie: 'I pinned Tek Sen on the map!'"]
+    SamMsg["Sam: 'Can we keep Day 2 afternoon relaxed?'"]
+    RileyMsg["Riley: 'My budget cap is RM 450/pax'"]
+    ConsensusMsg["Alex: 'Let\'s push the museum to Day 3'"]
+    ReplanAlert["⚡ System Alert: 'Kek Lok Si delayed due to rain; replanned'"]
+    SpendAlert["💵 System Alert: 'Alex logged RM 240 Rooftop drinks'"]
   end
 
   HumanMsg --> Broadcaster
-  SharePlace --> Broadcaster
+  SamMsg --> Broadcaster
+  RileyMsg --> Broadcaster
+  ConsensusMsg --> Broadcaster
   ReplanAlert --> Broadcaster
   SpendAlert --> Broadcaster
 
   Broadcaster <--> ClientA
   Broadcaster <--> ClientB
   Broadcaster <--> ClientC
+  Broadcaster <--> ClientD
 
-  ClientA --> ChatUI["Team Chat Tab / Drawer:<br/>- Text bubbles with timestamps<br/>- Interactive place cards with map links<br/>- System event notice pills"]
+  ClientA --> ChatUI["Team Group Chat Tab:<br/>- Text bubbles with timestamps<br/>- Interactive place cards with map links<br/>- System event notice pills"]
   ClientB --> ChatUI
   ClientC --> ChatUI
+  ClientD --> ChatUI
 ```
 
 ---
 
 #### 2.2.5 14-Screen End-to-End User Flow
-**Logic:** Strict sequential flow across all 14 screens. Users cannot trigger Gemini generation until destination is confirmed and real places exist.
+**Logic:** Strict sequential flow across all screens. Users cannot trigger Gemini generation until destination is confirmed and real places exist.
 
 ```mermaid
 flowchart TD
-  S00["00 Splash<br/>Icon & Slogan"] --> S01["01 Login / Register<br/>Supabase Auth"]
-  S01 --> S02["02 Trips<br/>Room list; allowed empty"]
-  S02 --> S03["03 Trip Home<br/>Switch Plan / Trip mode"]
-  S03 --> S11["11 Invite<br/>Copy link or friend invite"]
-  S03 --> S13["13 Group Chat<br/>Real-time member chat & alerts"]
-  S03 --> S04["04 Preference Form<br/>Dates, cap, pace, deal-breakers, hidden toggle"]
-  S04 --> S05["05 Map<br/>Photon fuzzy search + tap map"]
-  S05 --> AlignChk{"Destination confirmed &<br/>places added?"}
-  AlignChk -->|No| S04
-  AlignChk -->|Yes| S09["09 Agent<br/>Gemini arranges existing IDs"]
-  S09 --> S06["06 Itinerary<br/>Day-by-day real places"]
-  S06 --> S07["07 Trip Mode<br/>Next stop & quick updates"]
-  S07 --> DisCheck{"Delay or cannot go?"}
-  DisCheck -->|Yes| S12["12 Replan<br/>Patch only affected slot;<br/>locked stays unchanged"]
-  S12 --> S07
-  DisCheck -->|No| S08["08 Money<br/>Log item spend & split balances"]
-  S03 --> S10["10 Profile<br/>Default pace, dietary, friends"]
+  S01["01 Splash<br/>Brand & Slogan"] --> S02["02 Login / Register<br/>Supabase Auth"]
+  S02 --> S03["03 Trips<br/>List / Join with Code"]
+  S03 --> S04["04 Trip Home: Align<br/>Alex, Jamie, Sam, Riley"]
+  S03 --> S17["17 Invite<br/>Code 688422 & Link"]
+  S04 --> S05_08["05-08 Preferences 1-4<br/>Destination, Dates, Budget, Interests"]
+  S05_08 --> S09["09 Align Filled<br/>Overlap Window & RM 450 Cap"]
+  S09 --> DestCheck{"Confirm Destination?<br/>(Penang, Malaysia)"}
+  DestCheck -->|No| S04
+  DestCheck -->|Yes| S10["10 Trip Home: Plan<br/>4 Entry Cards"]
+  S10 --> S11["11 Map<br/>Add & Pin Real Venues"]
+  S10 --> S20_21["20-21 Group Chat<br/>Coordinate & Share Pins"]
+  S11 --> PlaceCheck{"Places in Pool > 0?"}
+  PlaceCheck -->|No| S11
+  PlaceCheck -->|Yes| S14["14 AI Agent<br/>Gemini Sequences Places"]
+  S14 --> S12_13["12-13 Itinerary<br/>Day 1 & Day 2 Real Stops"]
+  S12_13 --> S18["18 Trip Mode<br/>NEXT STOP Kek Lok Si (09:00)"]
+  S18 --> DisCheck{"Delay or Skip?<br/>(Heavy rain)"}
+  DisCheck -->|Yes| S19["19 Mid-Trip Replan<br/>Patch Slot; Keep Stays Locked"]
+  S19 --> S18
+  DisCheck -->|No| S15["15-15b Money<br/>Total Spent RM 368.50 & Splits"]
+  S03 --> S16["16 Profile: You<br/>Trip Count & Settings"]
 ```
 
 Bottom navigation tabs (always accessible in PWA): **Trips · Map · Plan · Money · You · Chat**
@@ -531,7 +545,7 @@ flowchart TB
 | :--- | :--- | :--- | :--- |
 | **Core Job** | Purchase flights and hotel stays | Generate full travel text from a prompt | Maintain one trusted record, then rearrange it |
 | **Data Source** | Live commercial booking APIs | LLM parametric weights | Member preference forms + tapped map pins |
-| **Group Sync** | Poor (individual checkout only) | None (single-user chat session) | **Native** (Solo or group, join by link) |
+| **Group Sync** | Poor (individual checkout only) | None (single-user chat session) | **Native** (Solo or group, join by code/link) |
 | **Budget Handling** | Shows price per item; ignores caps | Ignores collective financial constraints | **Strict ceiling** (`min(individual caps)`) |
 | **Disruption Replan** | Start inventory search over again | Regenerates entire multi-day prompt | **Patches only the single affected slot** |
 | **Data Honesty** | Fragile API failure modes | High rate of hallucinated shops & places | **Zero hallucinations** (hard halt if 0 places) |
@@ -553,7 +567,7 @@ mindmap
         Solo trip room
         Group collaboration room
         Real-time team group chat
-        Join by share link without friending
+        Join by share code 688422 without friending
         Invite from friends list
         Trip list allowed empty initially
       Identity and profiles
@@ -616,7 +630,7 @@ mindmap
       Expense and split ledger
         Log actual spend on itinerary items
         Automated who-owes-whom debt graph
-        Instant net balance settlement
+        Balance Equalizer net settlement
         No live dynamic ticket fare scraping
     PWA Interface and Screens
       PWA mobile architecture
@@ -628,21 +642,23 @@ mindmap
           Money tab
           You tab
           Chat tab
-      Fourteen core screens
-        00 Splash brand icon and slogan
-        01 Login and Register
-        02 Trips room list
-        03 Trip Home alignment hub
-        04 Preference Form
-        05 Map public pins
-        06 Day-by-Day Itinerary
-        07 Trip Mode live tracking
-        08 Money ceiling and splits
-        09 Agent Gemini chat
-        10 Profile defaults and dietary
-        11 Invite via link or friend
-        12 Replan single disrupted slot
-        13 Group Chat real-time messaging
+      Core screens
+        01 Splash brand icon and slogan
+        02 Login and Register
+        03 Trips room list
+        04 Trip Home alignment hub
+        05-08 4-step Preference wizard
+        09 Alignment summary
+        10 Trip Home plan mode
+        11 Map public pins
+        12-13 Itinerary empty and filled
+        14 Agent Gemini chat
+        15-15b Money and custom split
+        16 Profile defaults and stats
+        17 Invite via code 688422
+        18 Trip Mode live execution
+        19 Mid-trip replan single slot
+        20-21 Group Chat real-time messaging
     System Tech Stack
       Frontend Nuxt 3 and Vue 3
       Backend Nitro and Drizzle ORM
@@ -661,13 +677,13 @@ mindmap
 
 ```text
 Plan B System Topology
-├── 1. Users & Collaboration: Students & friends | Solo or group | Real-time chat | Link join (no friending) | Clean auth
-├── 2. Preference Gathering: 7-point form | Hidden destination (no map pin, Gemini reads privately)
+├── 1. Users & Collaboration: Students & friends | Solo or group | Real-time chat | Code join 688422 | Clean auth
+├── 2. Preference Gathering: 4-step wizard | Hidden destination (no map pin, Gemini reads privately)
 ├── 3. Alignment & Scheduling: Date overlaps | Budget ceiling = min(caps) | Destination lock prerequisite
 ├── 4. Constrained Gemini Agent: Scoped to single trip | Existing place IDs only | Stop on 0 places | Zero fake shops
 ├── 5. Dual Operating Modes: Plan Mode (align/schedule) | Trip Mode (next stop, delay flag, single-slot replan, stay lock)
-├── 6. Map & Money Ledgers: Photon search + tap-to-pin (open-source OSM) | Itemized spend | Debt graph who-owes-whom (no live fares)
-├── 7. PWA Interface & Screens: 390px mobile layout | 6 bottom tabs (Trips, Map, Plan, Money, You, Chat) | 14 screens (00-13)
+├── 6. Map & Money Ledgers: Photon search + tap-to-pin (open-source OSM) | Itemized spend | Balance Equalizer (even/custom)
+├── 7. PWA Interface & Screens: 390px mobile layout | 6 bottom tabs (Trips, Map, Plan, Money, You, Chat) | 21 screens (01-21)
 ├── 8. System Tech Stack: Nuxt 3 + Vue 3 | Nitro Server | Drizzle ORM | Supabase (RLS, Realtime) | Gemini | Leaflet OSM | Vercel
 └── 9. Explicit Anti-Features: No booking checkout APIs | No auto venue scraping | No dynamic fares
 ```
@@ -691,29 +707,41 @@ Plan B System Topology
 
 Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), giving travelers instant access to every part of their trip on the move.
 
-1. **Screen 03: Trip Home & Alignment Hub**  
-   The collaborative command center. It shows group readiness (e.g. 4/4 members completed), overlapping travel dates, the locked group budget ceiling (capped to the lowest member's personal limit), and the destination lock status, with a one-tap toggle between Plan Mode and Trip Mode.
+1. **Screen 01 & 02: Splash & Authentication**  
+   Clean cold-start brand screen with the Plan B slogan (*"When Plan A fails, Plan B saves the trip"*). The login screen highlights three core value propositions: **Group trips**, **AI-powered**, and **Split costs**, with instant account sign-up, email login, or Apple/Google sign-in.
 
-2. **Screen 04: Preference Form & Hidden Destination**  
-   A clean intake form for travel dates, budget limits, pace preferences, and deal-breakers. Includes a "Hide destination" toggle for surprise trips, allowing Gemini to factor the destination into the itinerary server-side without displaying its name or dropping a pin on peers' maps.
+2. **Screen 03 & 04: Trips List & Trip Home (Align Mode)**  
+   Shows the user's trips list (`Good morning, Alex`, `+ New Trip`, `Join with code`). Tapping into a trip opens the Trip Home on the **Align** tab (e.g., *"Penang with the gang"*, 4 members: Alex Host, Jamie, Sam, Riley), showing real-time preference submission statuses, an `+ Invite` button, and the destination lock prompt.
 
-3. **Screen 05: Grounded Dual-Mode Map**  
-   An interactive Leaflet map that shows only member-added places. Travelers can quickly search venues using Photon fuzzy autocomplete to pin spots automatically, or tap anywhere on the map canvas to drop custom coordinates.
+3. **Screen 05–08: 4-Step Preference Intake Form**  
+   - **Step 1 (Destination):** Allows members to propose a place (e.g., `Kyoto`) with a `Hide from group (Only AI uses this for planning)` toggle to protect surprise wishlists.  
+   - **Step 2 (Dates):** Captures individual travel windows (`Available from 10/10/2026 to 10/15/2026`) to compute group date overlaps.  
+   - **Step 3 (Budget & Pace):** Sets personal budget caps (e.g., `RM 2000`), explicitly noting that the group ceiling is capped to the lowest submitted amount, alongside preferred pace (`Slow` / `Easy` / `Fast`).  
+   - **Step 4 (Interests & Deal-Breakers):** Multi-select interest tags (`Culture`, `Food`, `Nature`, `Shopping`, `Nightlife`), explicit deal-breakers (`No 4am starts`), and must-dos.
 
-4. **Screen 06: Day-by-Day Grounded Itinerary**  
-   A chronological timeline constructed strictly from places added by the group. Key travel anchors like booked flights and hotel check-ins are badged with a locked stay icon so they are never shifted during schedule replans.
+4. **Screen 09 & 10: Alignment Summary & Trip Home (Plan Mode)**  
+   Once submitted, the member status turns `Ready`. The **Group Alignment** summary displays the computed date overlap, the group budget ceiling, and completion progress (`1/4 prefs in`). Once the destination is locked (`Penang, Malaysia`), switching to the **Plan** tab reveals four clear feature cards: `Itinerary`, `Map`, `AI Agent`, and `Budget`.
 
-5. **Screen 07: Live Trip Mode & Next Stop**  
-   The active on-the-ground travel screen. Features an arrival countdown to the next destination, a quick button to log expenses on the spot, and one-tap buttons to report a delay (+30m) or mark a stop as skipped.
+5. **Screen 11: Grounded Dual-Mode Map**  
+   Interactive Leaflet OpenStreetMap view where travelers search venues via Photon fuzzy autocomplete or tap directly on the map canvas to pin custom locations. Saved pins automatically become candidate stops for the trip pool—Gemini only sequences real pins and never invents locations.
 
-6. **Screen 12: Single-Slot Replan Modal**  
-   Triggered whenever a stop is marked delayed or skipped. Highlights the disrupted time slot and suggests 3 replacement candidates from the group's place pool to patch only that specific hour, keeping the rest of the day and locked reservations intact.
+6. **Screen 12 & 13: Grounded Day-by-Day Itinerary**  
+   Displays an empty state (`No activities yet` with Map and AI shortcuts) or a sequenced daily itinerary (Day 1: `Kek Lok Si Temple (09:00, 60min)`, `Char Koay Teow lunch (12:30)`; Day 2: `Penang Hill funicular (10:00)`). Each entry includes venue details, duration estimates, and locked badges for booked flights or accommodations.
 
-7. **Screen 08: Money & Debt Ledger**  
-   Tracks group spending against the shared budget ceiling and calculates an automated "who owes whom" settlement matrix to resolve debts in the fewest possible transfers without needing external accounting apps.
+7. **Screen 14: Trip-Scoped AI Agent**  
+   A dedicated chat assistant restricted strictly to the current trip room. A top context bar displays real-time trip parameters (`3 pins · 1/4 prefs · Budget cap: RM 450`). The agent arranges existing pinned stops according to member preferences and pace, without inventing fake venues or prices.
 
-8. **Screen 13: Real-Time Team Group Chat**  
-   A dedicated in-room group chat (accessible via the `Chat` tab) where members talk in real time, share interactive place cards directly into the conversation, and receive automatic broadcast notices whenever a stop is replanned or an expense is logged.
+8. **Screen 15 & 15b: Money & Balance Equalizer**  
+   Transparent shared expense ledger showing `TOTAL SPENT RM 368.50` (`RM 92.13 / person`). The **Balance Equalizer** visualizes who paid, fair shares, and net balances (green `gets` / red `owes`). The `Add Expense` sheet supports both **Even Split** (e.g., `Grab rides`) and **Custom Split** (e.g., `Rooftop drinks`, where Riley is set to RM 0).
+
+9. **Screen 16 & 17: Profile (You) & Invite**  
+   The Profile tab displays member stats (`1 Total Trips, 0 Active`) and account settings. The Invite screen provides a 6-digit room code (`688422`) and shareable link (`planb.app/join/688422`), allowing friends to join and submit preferences without forced pre-registration.
+
+10. **Screen 18 & 19: Live Trip Mode & Mid-Trip Replan**  
+    On the day of travel, Trip Mode features a prominent `NEXT STOP` card (`Kek Lok Si Temple`) with `Done`, `Delay`, and `Skip` buttons. When a disruption occurs (e.g., `Heavy rain at Air Itam`), the **Mid-Trip Replan** modal recalculates *only* that affected time slot using remaining places in the pool, keeping all booked flights and hotel reservations intact.
+
+11. **Screen 20 & 21: Real-Time Team Group Chat**  
+    An integrated in-room chat (accessible via the `Chat` tab) where members coordinate plans (Jamie pins `Tek Sen`, Sam asks for a relaxed afternoon, Riley shares a budget constraint). The team reaches consensus directly in chat (e.g., "Let's push the museum to Day 3" / "Sounds good to me!") and receives automatic broadcast notifications for schedule patches and logged expenses.
 
 ---
 
@@ -722,7 +750,7 @@ Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-t
 | Evaluation Dimension | Traditional Travel Apps (Wanderlog, TripIt) | Group Chat + Splitwise | Generic Travel AI Bots | **Plan B (Our Solution)** |
 | :--- | :--- | :--- | :--- | :--- |
 | **Itinerary Construction** | Manual email parsing or static lists | None; fragmented text in notes | Unconstrained hallucinated venues & fake prices | **Sequenced strictly from real member-added place IDs** |
-| **Group Preference Alignment** | Weak; assumes one person plans everything | Endless unstructured debates in chat | Single-user prompt; no group context | **Structured 7-point form + automated overlap engine** |
+| **Group Preference Alignment** | Weak; assumes one person plans everything | Endless unstructured debates in chat | Single-user prompt; no group context | **4-step preference form + automated overlap engine** |
 | **Budget Enforcement** | Passive cost display; ignores caps | Retroactive accounting after overspending | Ignores budgets or invents fake costs | **Upfront group ceiling locked to lowest individual cap** |
 | **Surprise / Private Wishlists** | Non-existent; everything is public | Leaked immediately in group chat | N/A | **Hidden destination toggle (server-side Gemini isolation)** |
 | **Mid-Trip Disruption Response** | Manual multi-day rescheduling | Panic in chat; manual reshuffling | Re-generates entire itinerary from scratch | **Single-slot replanning (preserves locked stays/flights)** |
@@ -815,18 +843,18 @@ To ensure 100% technical feasibility, the scope for the build phase is strictly 
 
 #### In-Scope (What We Plan to Build):
 - [x] Full authentication flow with personal travel defaults (pace, dietary restrictions, friend connections).
-- [x] Solo and group trip room lifecycle with instant link sharing (no mutual friending required).
-- [x] 7-parameter preference submission form with the "Hidden Destination" privacy toggle.
+- [x] Solo and group trip room lifecycle with instant link and 6-digit code sharing (`688422`).
+- [x] 4-step preference submission form with the "Hidden Destination" privacy toggle.
 - [x] System alignment engine computing date intersections, deal-breaker clashes, and group budget ceiling (`min(individual caps)`).
 - [x] Interactive Leaflet OSM map with Photon fuzzy search autocomplete and direct tap-to-pin coordinate saving.
 - [x] Server-side Gemini itinerary sequencing constrained to existing place IDs, with a hard halt guardrail if zero places exist.
 - [x] Plan Mode (preparation) and Trip Mode (live next-stop countdown) state machine.
 - [x] Single-slot replan modal replacing only the disrupted hour while preserving locked flights and hotel stays.
-- [x] Itinerary-tied expense logging with automated who-owes-whom debt graph calculation.
+- [x] Itinerary-tied expense logging with automated who-owes-whom debt graph calculation (Balance Equalizer).
 - [x] Real-time in-room team group chat powered by Supabase Realtime with place card sharing and live disruption broadcast.
 - [x] Mobile-first PWA interface with persistent 6-tab navigation (`Trips · Map · Plan · Money · You · Chat`).
 
 #### Out-of-Scope (Explicit Anti-Features):
 - ❌ **Commercial Flight & Hotel Booking APIs:** No live ticket checkouts or dynamic inventory scrapers. Bookings are represented as user-entered, locked anchor items.
 - ❌ **Nearby Auto-Scrapers:** The app never pulls unverified external restaurant lists; it schedules only venues intentionally added by travelers.
-- ❌ **Dynamic Currency Fare Speculation:** Expense splitting is based on actual logged receipts, not speculative live foreign exchange scrapers.
+- ❌ **Dynamic Currency Fare Speculation:** Expense splitting is based on actual logged receipts, not speculative live foreign exchange scrapers.\n
