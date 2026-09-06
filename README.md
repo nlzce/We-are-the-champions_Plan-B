@@ -8,12 +8,12 @@
 - Yap Chun Hoong
 - Yap Shern Yu
 
-**Track:** Lifestyle · Planning an Escape  
-**Problem Statement:** Travel Planner  
-**Submission:** Plan B  
-**Video file / YouTube title:** `We Are The Champions — Plan B — Planning an Escape`  
-**Video Presentation:** [Unlisted Youtube Link]  
-**Presentation Slides:** [Public Link]  
+**Track:** Lifestyle · Planning an Escape
+**Problem Statement:** Travel Planner
+**Submission:** Plan B
+**Video file / YouTube title:** `We Are The Champions — Plan B — Planning an Escape`
+**Video Presentation:** [Unlisted Youtube Link]
+**Presentation Slides:** [Public Link]
 
 ---
 
@@ -47,7 +47,7 @@ Plan B is a phone-first Progressive Web App (PWA) and grounded AI assistant desi
 7. **Dual Operating Modes:** Clear separation between **Plan Mode** (pre-trip alignment & schedule generation) and **Trip Mode** (live on-the-ground tracking & next-stop countdowns).
 8. **Single-Slot Replanning (Core Innovation):** Marking a stop as delayed or skipped prompts Gemini to replace *only* that specific time slot using available places, while booked hotel stays and flights remain untouched.
 9. **Itinerary-Tied Debt Ledger:** Expenses are logged directly against specific itinerary stops, automatically generating a minimal-transaction "who owes whom" debt graph.
-10. **Real-Time Team Group Chat:** In-room messaging powered by Supabase Realtime where members can chat, share interactive place cards, and receive automatic broadcast alerts for replanned stops and logged expenses.
+10. **Real-Time Team Group Chat with Conversational AI Concierge:** In-room messaging powered by Supabase Realtime where members can chat, share interactive place cards, receive automatic broadcast alerts for replanned stops, and mention `@PlanB` to query trip parameters, settle debts, or adjust schedules collaboratively.
 11. **Mobile PWA Interface:** Built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), optimized for quick one-handed mobile interactions.
 
 #### The Core PWA Journey:
@@ -64,7 +64,7 @@ Plan B is a phone-first Progressive Web App (PWA) and grounded AI assistant desi
 | **A. Plan B Grounded Collaborative Workspace (Chosen)** | **Kept (Chosen)** | Solves the core group coordination problem by replacing fragmented tools with a single trusted record for people, money, and days. The constrained Gemini agent only sequences places added by members, eliminating AI hallucinations and brittle booking API dependencies while delivering single-slot replanning. |
 | **B. Vercel Serverless + Supabase Cloud Architecture (Chosen)** | **Kept (Chosen)** | Provides native Nuxt 3 (Nitro) serverless execution, PostgreSQL Row-Level Security (RLS) to enforce hidden destination privacy, and managed Realtime WebSockets for instant in-room group chat and live trip updates without maintaining dedicated websocket servers. |
 | **C. Grounded Dual-Mode Map: Photon Search + Tap-to-Pin (Chosen)** | **Kept (Chosen)** | Combines open-source Photon geocoding (OpenStreetMap data) for fast, free-text fuzzy search autocomplete with direct map canvas tapping for custom coordinates. Delivers a reliable, responsive mapping experience without commercial API keys or vendor lock-in. |
-| **D. Real-time Team Group Chat with Live Broadcast Feed (Chosen)** | **Kept (Chosen)** | Keeps communication directly inside the trip room via Supabase Realtime. Eliminates switching to external messaging apps by allowing members to share place cards and receive automated broadcast alerts whenever a slot is replanned or an expense is recorded. |
+| **D. Real-time Team Group Chat with In-Room AI Concierge (Chosen)** | **Kept (Chosen)** | Keeps communication and coordination directly inside the trip room via Supabase Realtime. Eliminates switching to external messaging apps by allowing members to share place cards, receive automated disruption alerts, and mention `@PlanB` to get instant group-visible answers on schedule, debts, or pacing without burdening the trip host. |
 | **E. All-in-One Booking Super-App with Live Flight/Hotel APIs** | **Dropped** | Commercial booking APIs introduce rigid rate limits, high quota costs, and frequent checkout failures. Group travelers typically book flights and accommodations separately outside the app anyway; embedding ticket checkouts adds fake availability and unnecessary fragility. |
 | **F. Conversational Free-Form Travel Chatbot** | **Dropped** | Unconstrained LLMs tend to generate generic tourist schedules with non-existent venue names, inaccurate pricing, and zero awareness of real group constraints or lowest-budget limits. |
 | **G. Strict Public Nominatim Geocoder** | **Dropped** | Public Nominatim enforces a strict 1 request per second fair-use limit that breaks smooth search-as-you-type autocomplete, and often struggles with informal local venue names. Replaced with Photon. |
@@ -313,7 +313,7 @@ flowchart TD
 flowchart TD
   User["Traveler (Alex)"] --> InputDest["Input Destination: 'Kyoto'"]
   InputDest --> Toggle["Toggle: [ Hide from group (Only AI uses this for planning) ]"]
-  
+
   Toggle --> ClientUI["Client UI State (Alex)"]
   Toggle --> ServerAPI["Server API: /api/preferences/submit"]
 
@@ -336,7 +336,7 @@ flowchart TD
 ```mermaid
 flowchart TD
   UserAction{"How Traveler Adds Place"}
-  
+
   UserAction -->|Type in Search Bar| SearchInput["Search Query: 'Tek Sen Restaurant'"]
   SearchInput --> PhotonAPI["Photon Fuzzy Geocoder API<br/>(OpenStreetMap by Komoot)"]
   PhotonAPI --> AutocompleteList["Dropdown Autocomplete List<br/>Real venues with address & district"]
@@ -410,7 +410,7 @@ flowchart TD
   Log2["Expense 2: RM 128.50 Grab Rides<br/>Paid by Jamie · Even Split 4 ways"] --> Ledger
 
   Ledger --> NetCalc["Calculate Net Balance for Each Member:<br/>Net = Total Paid - Fair Share"]
-  
+
   NetCalc --> B1["Alex: Paid RM 240.00 ➔ Net: +RM 147.87 (Gets)"]
   NetCalc --> B2["Jamie: Paid RM 128.50 ➔ Net: +RM 36.37 (Gets)"]
   NetCalc --> B3["Sam: Paid RM 0.00 ➔ Net: -RM 92.12 (Owes)"]
@@ -707,41 +707,41 @@ Plan B System Topology
 
 Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), giving travelers instant access to every part of their trip on the move.
 
-1. **Screen 01 & 02: Splash & Authentication**  
+1. **Screen 01 & 02: Splash & Authentication**
    Clean cold-start brand screen with the Plan B slogan (*"When Plan A fails, Plan B saves the trip"*). The login screen highlights three core value propositions: **Group trips**, **AI-powered**, and **Split costs**, with instant account sign-up, email login, or Apple/Google sign-in.
 
-2. **Screen 03 & 04: Trips List & Trip Home (Align Mode)**  
+2. **Screen 03 & 04: Trips List & Trip Home (Align Mode)**
    Shows the user's trips list (`Good morning, Alex`, `+ New Trip`, `Join with code`). Tapping into a trip opens the Trip Home on the **Align** tab (e.g., *"Penang with the gang"*, 4 members: Alex Host, Jamie, Sam, Riley), showing real-time preference submission statuses, an `+ Invite` button, and the destination lock prompt.
 
-3. **Screen 05–08: 4-Step Preference Intake Form**  
-   - **Step 1 (Destination):** Allows members to propose a place (e.g., `Kyoto`) with a `Hide from group (Only AI uses this for planning)` toggle to protect surprise wishlists.  
-   - **Step 2 (Dates):** Captures individual travel windows (`Available from 10/10/2026 to 10/15/2026`) to compute group date overlaps.  
-   - **Step 3 (Budget & Pace):** Sets personal budget caps (e.g., `RM 2000`), explicitly noting that the group ceiling is capped to the lowest submitted amount, alongside preferred pace (`Slow` / `Easy` / `Fast`).  
+3. **Screen 05–08: 4-Step Preference Intake Form**
+   - **Step 1 (Destination):** Allows members to propose a place (e.g., `Kyoto`) with a `Hide from group (Only AI uses this for planning)` toggle to protect surprise wishlists.
+   - **Step 2 (Dates):** Captures individual travel windows (`Available from 10/10/2026 to 10/15/2026`) to compute group date overlaps.
+   - **Step 3 (Budget & Pace):** Sets personal budget caps (e.g., `RM 2000`), explicitly noting that the group ceiling is capped to the lowest submitted amount, alongside preferred pace (`Slow` / `Easy` / `Fast`).
    - **Step 4 (Interests & Deal-Breakers):** Multi-select interest tags (`Culture`, `Food`, `Nature`, `Shopping`, `Nightlife`), explicit deal-breakers (`No 4am starts`), and must-dos.
 
-4. **Screen 09 & 10: Alignment Summary & Trip Home (Plan Mode)**  
+4. **Screen 09 & 10: Alignment Summary & Trip Home (Plan Mode)**
    Once submitted, the member status turns `Ready`. The **Group Alignment** summary displays the computed date overlap, the group budget ceiling, and completion progress (`1/4 prefs in`). Once the destination is locked (`Penang, Malaysia`), switching to the **Plan** tab reveals four clear feature cards: `Itinerary`, `Map`, `AI Agent`, and `Budget`.
 
-5. **Screen 11: Grounded Dual-Mode Map**  
+5. **Screen 11: Grounded Dual-Mode Map**
    Interactive Leaflet OpenStreetMap view where travelers search venues via Photon fuzzy autocomplete or tap directly on the map canvas to pin custom locations. Saved pins automatically become candidate stops for the trip pool—Gemini only sequences real pins and never invents locations.
 
-6. **Screen 12 & 13: Grounded Day-by-Day Itinerary**  
+6. **Screen 12 & 13: Grounded Day-by-Day Itinerary**
    Displays an empty state (`No activities yet` with Map and AI shortcuts) or a sequenced daily itinerary (Day 1: `Kek Lok Si Temple (09:00, 60min)`, `Char Koay Teow lunch (12:30)`; Day 2: `Penang Hill funicular (10:00)`). Each entry includes venue details, duration estimates, and locked badges for booked flights or accommodations.
 
-7. **Screen 14: Trip-Scoped AI Agent**  
-   A dedicated chat assistant restricted strictly to the current trip room. A top context bar displays real-time trip parameters (`3 pins · 1/4 prefs · Budget cap: RM 450`). The agent arranges existing pinned stops according to member preferences and pace, without inventing fake venues or prices.
+7. **Screen 14: Trip-Scoped AI Agent (Trip Context Oracle & Itinerary Controller)**
+   A dedicated itinerary control interface restricted strictly to the current trip room. A top context bar displays real-time trip parameters (`3 pins · 1/4 prefs · Budget cap: RM 450`). Rather than generic chit-chat, the agent serves as an intelligent itinerary controller grounded in the trip's live database: travelers can directly query trip logistics in plain text (e.g. *"What time do we leave tomorrow?"*, *"Who owes money right now?"*, *"Is dinner vegetarian-friendly for Jamie?"*) or trigger one-tap schedule mutations via quick chips (`Relax pace`, `Swap Day 2`, `Add meal stop`) without inventing fake venues or prices.
 
-8. **Screen 15 & 15b: Money & Balance Equalizer**  
+8. **Screen 15 & 15b: Money & Balance Equalizer**
    Transparent shared expense ledger showing `TOTAL SPENT RM 368.50` (`RM 92.13 / person`). The **Balance Equalizer** visualizes who paid, fair shares, and net balances (green `gets` / red `owes`). The `Add Expense` sheet supports both **Even Split** (e.g., `Grab rides`) and **Custom Split** (e.g., `Rooftop drinks`, where Riley is set to RM 0).
 
-9. **Screen 16 & 17: Profile (You) & Invite**  
+9. **Screen 16 & 17: Profile (You) & Invite**
    The Profile tab displays member stats (`1 Total Trips, 0 Active`) and account settings. The Invite screen provides a 6-digit room code (`688422`) and shareable link (`planb.app/join/688422`), allowing friends to join and submit preferences without forced pre-registration.
 
-10. **Screen 18 & 19: Live Trip Mode & Mid-Trip Replan**  
+10. **Screen 18 & 19: Live Trip Mode & Mid-Trip Replan**
     On the day of travel, Trip Mode features a prominent `NEXT STOP` card (`Kek Lok Si Temple`) with `Done`, `Delay`, and `Skip` buttons. When a disruption occurs (e.g., `Heavy rain at Air Itam`), the **Mid-Trip Replan** modal recalculates *only* that affected time slot using remaining places in the pool, keeping all booked flights and hotel reservations intact.
 
-11. **Screen 20 & 21: Real-Time Team Group Chat**  
-    An integrated in-room chat (accessible via the `Chat` tab) where members coordinate plans (Jamie pins `Tek Sen`, Sam asks for a relaxed afternoon, Riley shares a budget constraint). The team reaches consensus directly in chat (e.g., "Let's push the museum to Day 3" / "Sounds good to me!") and receives automatic broadcast notifications for schedule patches and logged expenses.
+11. **Screen 20 & 21: Real-Time Team Group Chat with Conversational AI Concierge**
+    An integrated in-room chat (accessible via the `Chat` tab) where members coordinate plans (Jamie pins `Tek Sen`, Sam asks for a relaxed afternoon, Riley shares a budget constraint). Beyond peer-to-peer messaging, the AI agent participates directly in the conversation as an in-room concierge: any traveler can mention `@PlanB` (e.g., *"@PlanB what time is hotel check-out?"*, *"@PlanB who owes Alex money?"*, or *"@PlanB make tomorrow morning more relaxed"*) to receive instant, group-visible answers and schedule diff cards. The chat also receives automatic broadcast notifications whenever a slot is replanned or an expense is logged.
 
 ---
 
@@ -755,13 +755,14 @@ Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-t
 | **Surprise / Private Wishlists** | Non-existent; everything is public | Leaked immediately in group chat | N/A | **Hidden destination toggle (server-side Gemini isolation)** |
 | **Mid-Trip Disruption Response** | Manual multi-day rescheduling | Panic in chat; manual reshuffling | Re-generates entire itinerary from scratch | **Single-slot replanning (preserves locked stays/flights)** |
 | **Expense Settlement** | Requires paid tier or external app | Separate app disconnected from agenda | None | **In-room debt graph tied directly to itinerary items** |
-| **Team Communication** | External (WhatsApp / Telegram) | Fragmented across chat history | Single-player chatbot session | **In-room group chat with live itinerary broadcast** |
+| **Team Communication** | External (WhatsApp / Telegram) | Fragmented across chat history | Single-player chatbot session | **In-room group chat with @PlanB AI bot & live itinerary broadcasts** |
 
 ### Novel Features & Architectural Highlights:
 1. **The Lowest-Cap Ceiling (`min(individual caps)`):** Most group trips overspend because the highest-budget member dominates. Plan B programmatically locks the group ceiling to the lowest member cap, ensuring travel remains accessible to everyone in the group.
 2. **Hidden Destination Privacy Shield:** Solves peer friction when planning surprises or sensitive destinations. A member can propose a destination without exposing it on the shared map; Gemini factors it in secretly while being strictly forbidden from naming it.
 3. **The Constrained Gemini Guardrail:** The AI is not an open-ended writer; it is an itinerary optimizer restricted to an allow-list of member place IDs. If zero places exist, it immediately halts. It is architecturally prevented from inventing fake restaurants or prices.
 4. **Single-Slot Replanning:** When travel disruptions happen, travelers do not need to rewrite the entire trip. Plan B isolates the single broken hour, evaluates candidate replacements from the existing place pool, and patches only that slot—keeping booked flights and hotel reservations permanently locked.
+5. **In-Room Conversational AI Concierge (`@PlanB`):** In addition to the dedicated Agent workbench (Screen 14), the AI joins the group chat directly. Members can mention `@PlanB` to query shared parameters, settle debts, or trigger consensus schedule diffs, liberating the trip host from answering repetitive logistics questions.
 
 ---
 
