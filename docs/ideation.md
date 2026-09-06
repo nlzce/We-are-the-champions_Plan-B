@@ -1,16 +1,17 @@
 # Plan B — Ideation & System Architecture (Mermaid)
 
-**Team:** We Are The Champions
-**Track:** Lifestyle · Planning an Escape
-**Slogan:** When plan A fails, Plan B saves the trip.
+**Team:** We Are The Champions  
+**Members:** Tan Poh Zhai, Lee Wai Loong, Yap Chun Hoong, Yap Shern Yu  
+**Track:** Lifestyle · Planning an Escape  
+**Slogan:** When plan A fails, Plan B saves the trip.  
 
-This document serves as the central ideation asset for the Plan B public GitHub repository. All diagrams are natively rendered in GitHub Flavored Markdown via Mermaid. For slides, pitch decks, and visual exports, open [diagrams.html](diagrams.html) in any browser.
+This document serves as the central ideation and architectural specification for Plan B. All models and workflows are modeled natively in Mermaid for direct GitHub rendering. For interactive browser viewing and high-resolution screenshot export for presentation slides, open [diagrams.html](diagrams.html).
 
 ---
 
 ## 1. Problem Tree
 
-**Logic:** Three root organizational failures combine into one core breakdown: **the lack of a single trusted trip record**. This single gap causes all downstream symptoms that judges and travelers know well: overspending, unaligned schedules, hallucinated/fake venues, and total trip collapse after a minor delay.
+**Logic:** Three root organizational failures combine into one core breakdown: **the lack of a single trusted trip record**. This gap produces the four major failure modes travelers and judges encounter: overspending, unaligned dates, hallucinated venues, and trip collapse after a minor transit delay.
 
 ```mermaid
 flowchart TB
@@ -51,9 +52,9 @@ flowchart TB
 
 ---
 
-## 2. Use Case Diagram
+## 2. System Boundary Use Case Diagram
 
-**Logic:** Represents the complete behavioral boundary of the Plan B PWA. It distinguishes between standard **Traveler / Members**, the **Trip Owner**, and the autonomous, trip-scoped **Gemini Agent**.
+**Logic:** Formal UML representation of the Plan B workspace boundary, distinguishing interactions between **Travelers**, the **Room Owner**, and the autonomous, trip-scoped **Gemini Agent**.
 
 ```mermaid
 flowchart LR
@@ -68,13 +69,13 @@ flowchart LR
 
   Owner -.->|inherits| Traveler
 
-  subgraph Boundary["System Boundary: Plan B Workspace (PWA)"]
+  subgraph Boundary["System Boundary: Plan B Workspace (PWA & Desktop Web)"]
     subgraph UC_Auth["1. Account & Profile"]
       UC01(["UC01: Register & Login<br/>(No mock/seed accounts)"]):::usecase
       UC02(["UC02: Manage Profile<br/>(Default pace, dietary, friends)"]):::usecase
     end
 
-    subgraph UC_Room["2. Trip Rooms"]
+    subgraph UC_Room["2. Trip Rooms & Collaboration"]
       UC03(["UC03: Create / View Trip Room<br/>(Allowed to be empty initially)"]):::usecase
       UC04(["UC04: Join via Share Link<br/>(No prior friending required)"]):::usecase
       UC05(["UC05: Invite from Friends List"]):::usecase
@@ -102,7 +103,7 @@ flowchart LR
 
     subgraph UC_Money["6. Expense & Settlement"]
       UC16(["UC16: Log Itemized Expense"]):::usecase
-      UC17(["UC17: Settle Who-Owes-Whom<br/>(No live fare scraping)"]):::usecase
+      UC17(["UC17: Settle Who-Owes-Whom<br/>(Graph debt minimization)"]):::usecase
     end
   end
 
@@ -154,9 +155,9 @@ flowchart LR
 
 ---
 
-## 3. Activity Diagram
+## 3. End-to-End Activity Diagram
 
-**Logic:** Swimlane activity diagram mapping the end-to-end lifecycle across the **Traveler**, the **Plan B System Engine**, and the **Trip-Scoped Gemini Agent**, highlighting guardrails, hidden destination isolation, and single-slot replanning.
+**Logic:** Swimlane activity diagram mapping the complete journey across **Traveler**, **System Engine**, **Trip-Scoped Gemini Agent**, and **Trip Execution/Money**.
 
 ```mermaid
 flowchart TD
@@ -214,19 +215,199 @@ flowchart TD
   end
 ```
 
-| Lifecycle Phase | Key Actions & System Enforcement | Failure / Boundary Handling |
-| --- | --- | --- |
-| **1. Identity & Rooms** | Clean auth; empty room creation or link-based join. | No mock data seeded; link requires no prior friendship. |
-| **2. Preference Input** | Members submit 7-point form; can mark destination hidden. | Hidden destination is never rendered as a pin on peers' maps. |
-| **3. Alignment Calculation** | System calculates overlap window and minimum personal budget cap. | Daily scheduling blocked until destination is formally confirmed. |
-| **4. Gemini Scheduling** | Ingests allowed place IDs server-side + hidden destination. | **Hard Stop:** If 0 place IDs exist, agent halts immediately. Never invents shops. |
-| **5. Trip Mode Execution** | Displays next stop and active timeline. | Clean UI separation between planning and live execution. |
-| **6. Mid-Trip Replan** | Member flags delay or cancellation on an active slot. | **Slot-only replanning:** Locked stays and flights are strictly preserved. |
-| **7. Money & Split** | Expenses logged directly on itinerary items. | Offline math computes debt graph; no live fare scraping. |
+---
+
+## 4. Dedicated Functional Architecture Diagrams (Per Function Separately)
+
+### 4.1 Function 1: Automated Alignment & Destination Lock Engine
+**Description:** Calculates the overlapping availability window, locks the group budget ceiling strictly to the lowest individual cap, aggregates deal-breaker constraints, and enforces a mandatory destination confirmation lock before itinerary generation unlocks.
+
+```mermaid
+flowchart TD
+  M1["Member A Form<br/>Dates: Oct 12-16 · Cap: RM 600 · Pace: Moderate"] --> Engine["Alignment Calculation Engine"]
+  M2["Member B Form<br/>Dates: Oct 11-15 · Cap: RM 450 · Pace: Balanced"] --> Engine
+  M3["Member C Form<br/>Dates: Oct 12-15 · Cap: RM 800 · Pace: Relaxed"] --> Engine
+
+  Engine --> CalcDate["Calculate Date Intersection<br/>Overlap Window: Oct 12 - 15 (4 Days)"]
+  Engine --> CalcCap["Calculate Group Budget Ceiling<br/>min(600, 450, 800) = RM 450 / pax<br/>(Lowest cap protects lowest spender)"]
+  Engine --> CalcBreakers["Aggregate Deal-Breakers<br/>Merged: No seafood · No 7am wakeups"]
+
+  CalcDate --> AlignCard["Render Group Alignment Card<br/>(4/4 Members Completed)"]
+  CalcCap --> AlignCard
+  CalcBreakers --> AlignCard
+
+  AlignCard --> LockCheck{"Group Confirmed<br/>Destination?"}
+  LockCheck -->|No| Pending["Display Lock Badge: Pending Confirmation<br/>Itinerary generation remains locked"]
+  LockCheck -->|Yes| Locked["Display Lock Badge: Destination Confirmed ✓<br/>Unlock Itinerary Generation Button"]
+```
 
 ---
 
-## 4. User Flow
+### 4.2 Function 2: Hidden Destination Privacy & Server-Side Shielding
+**Description:** Ensures private surprise wishlists are never leaked to peers via UI or map pins. Client queries are blocked by PostgreSQL Row-Level Security (RLS), while Gemini processes the destination server-side under a strict system prompt forbidding it from ever revealing the name.
+
+```mermaid
+flowchart TD
+  User["Traveler (Member A)"] --> InputDest["Input Wishlist: 'Surprise Beach Villa'"]
+  InputDest --> Toggle["Toggle: [ Hide Destination from Group ]"]
+  
+  Toggle --> ClientUI["Client UI State (Member A)"]
+  Toggle --> ServerAPI["Server API: /api/preferences/submit"]
+
+  ServerAPI --> DB[(Supabase PostgreSQL)]
+  DB --> RLS["Row-Level Security (RLS) Policy<br/>is_hidden = true"]
+
+  RLS -->|Peers (Member B & C)| BlockPeers["Map Query: Excluded from pins<br/>Peers cannot see coordinate or venue name"]
+  RLS -->|Member A (Owner)| AllowOwner["Member A can see private indicator badge"]
+
+  DB --> ServerGemini["Trip-Scoped Gemini Server Route<br/>(Reads is_hidden destination securely)"]
+  ServerGemini --> Prompt["System Instruction Guardrail:<br/>'Factor in private destination characteristics,<br/>but NEVER state its name in outputs.'"]
+  Prompt --> ItineraryOut["Generated Itinerary Response<br/>(Secretly incorporates slot without leaking venue)"]
+```
+
+---
+
+### 4.3 Function 3: Grounded Dual-Mode Map Engine
+**Description:** Free open-source map integration with zero commercial API keys. Combines real-time Photon fuzzy search autocomplete on OpenStreetMap data with direct canvas tapping for arbitrary custom coordinates.
+
+```mermaid
+flowchart TD
+  UserAction{"How Traveler Adds Place"}
+  
+  UserAction -->|Type in Search Bar| SearchInput["Search Query: 'Toh Soon Cafe'"]
+  SearchInput --> PhotonAPI["Photon Fuzzy Geocoder API<br/>(OpenStreetMap by Komoot)"]
+  PhotonAPI --> AutocompleteList["Dropdown Autocomplete List<br/>Real venues with address & district"]
+  AutocompleteList --> SelectResult["Traveler selects search result"]
+  SelectResult --> ExtractCoords["Extract lat/lng & place metadata"]
+
+  UserAction -->|Tap on Map Canvas| MapClick["Leaflet click event on OSM tiles"]
+  MapClick --> ClickCoords["Capture clicked lat/lng coordinates"]
+  ClickCoords --> PromptName["Prompt traveler for venue label & tag"]
+  PromptName --> ExtractCoords
+
+  ExtractCoords --> SaveDB["Write to Supabase: trip_places table<br/>(trip_id, name, lat, lng, added_by, cost_est)"]
+  SaveDB --> RenderMap["Render Custom Numbered Pin on Map<br/>(Pin 1, Pin 2, Pin 3...)"]
+  RenderMap --> Drawer["Open Bottom Drawer Sheet:<br/>Place Details + '+ Add to Itinerary Pool'"]
+```
+
+---
+
+### 4.4 Function 4: Constrained Gemini Planner & 0-Place Guardrail
+**Description:** Enforces strict grounding. The Gemini model is constrained to an allow-list of member-added place IDs. If zero places exist, the engine halts immediately and refuses to fabricate fictional restaurants or attractions.
+
+```mermaid
+flowchart TD
+  Trigger["User triggers: 'Generate Itinerary'"] --> FetchPlaces["Fetch trip_places from DB where trip_id = current"]
+  FetchPlaces --> CountCheck{"Count(trip_places) > 0?"}
+
+  CountCheck -->|No: Count == 0| HaltBranch["🛑 HARD STOP GUARDRAIL TRIGGERED<br/>Zero places exist in trip pool"]
+  HaltBranch --> HaltResponse["Return UI Warning:<br/>'Cannot generate schedule: 0 places in pool.<br/>Please add places via Map or Form first.'<br/>(Zero invented venues or fake prices)"]
+
+  CountCheck -->|Yes: Count > 0| PreparePayload["Prepare Grounded Agent Payload:<br/>- Allowed Place IDs: [id_1, id_2, id_3...]<br/>- Group Budget Cap: RM 450<br/>- Group Pace: Balanced"]
+  PreparePayload --> GeminiCall["Call Google Gemini API<br/>(Enforce JSON Mode & Place ID Schema)"]
+  GeminiCall --> ValidateJSON["Server-side JSON Schema Validation:<br/>Verify all returned IDs exist in allow-list"]
+  ValidateJSON --> WriteDays["Write rows to trip_itinerary table<br/>(Day 1, Day 2, Day 3 with verified IDs)"]
+```
+
+---
+
+### 4.5 Function 5: Live Trip Mode & Surgical Single-Slot Replan
+**Description:** The core product differentiator. In Trip Mode, when a delay or closure occurs, the system preserves all locked flights and hotel stays while instructing Gemini to recalculate only the single disrupted time block.
+
+```mermaid
+flowchart TD
+  TripMode["Live Trip Mode Active<br/>Countdown: 'NEXT STOP IN 28 MINS'"] --> Disruption{"Disruption Occurs<br/>on active slot (10:30 AM)"}
+
+  Disruption -->|Member taps Delay| DelayBtn["⚠️ Delayed (+30m)"]
+  Disruption -->|Member taps Cannot Go| SkipBtn["❌ Cannot Go / Closed"]
+
+  DelayBtn --> ReplanTrigger["Trigger Single-Slot Replan Engine"]
+  SkipBtn --> ReplanTrigger
+
+  ReplanTrigger --> LockStays["🔒 LOCK INTEGRITY ENFORCEMENT:<br/>- 05:00 PM Hotel Check-in: LOCKED<br/>- Return Flight: LOCKED<br/>(Never shifted or modified)"]
+
+  LockStays --> QueryPool["Query unused places from trip_places pool"]
+  QueryPool --> GeminiReplan["Gemini: Replan ONLY 10:30 AM Slot<br/>Constraints: Fits into 2hr window before Hotel Check-in<br/>Remaining budget under RM 450 cap"]
+
+  GeminiReplan --> ReturnOptions["Generate 3 Replacement Candidates:<br/>1. Cheong Fatt Tze Mansion (Heritage, 15m away)<br/>2. Penang Museum (Free entry, 8m away)<br/>3. ChinaHouse Rest (Cafe break)"]
+
+  ReturnOptions --> ReplanModal["Display Single-Slot Replan Modal<br/>(Highlights disrupted slot in red,<br/>locked stays in green, 3 options)"]
+  ReplanModal --> UserConfirm["User selects Option 1 & confirms"]
+  UserConfirm --> PatchSlot["Update ONLY that single slot in DB<br/>Resume Live Trip Mode"]
+```
+
+---
+
+### 4.6 Function 6: Who-Owes-Whom Debt Graph Settlement Engine
+**Description:** Itemized receipts tied directly to itinerary items are parsed by a graph minimization algorithm that computes the minimal number of peer-to-peer transfers required to settle all debts.
+
+```mermaid
+flowchart TD
+  Log1["Expense 1: RM 60 Breakfast<br/>Paid by Alex · Split 4 ways (RM 15 each)"] --> Ledger["Trip Expense Ledger"]
+  Log2["Expense 2: RM 100 Tickets<br/>Paid by Sarah · Split 4 ways (RM 25 each)"] --> Ledger
+
+  Ledger --> NetCalc["Calculate Net Balance for Each Member:<br/>Net = Total Paid - Fair Share"]
+  
+  NetCalc --> B1["Alex: Paid RM 60, Share RM 40 ➔ Net: +RM 20"]
+  NetCalc --> B2["Sarah: Paid RM 100, Share RM 40 ➔ Net: +RM 60"]
+  NetCalc --> B3["Bob: Paid RM 0, Share RM 40 ➔ Net: -RM 40"]
+  NetCalc --> B4["Ken: Paid RM 0, Share RM 40 ➔ Net: -RM 40"]
+
+  B1 --> GraphSolve["Greedy Debt Simplification Algorithm<br/>(Minimizes total transaction count)"]
+  B2 --> GraphSolve
+  B3 --> GraphSolve
+  B4 --> GraphSolve
+
+  GraphSolve --> Settle1["Transaction 1: Bob pays Alex RM 20"]
+  GraphSolve --> Settle2["Transaction 2: Bob pays Sarah RM 20"]
+  GraphSolve --> Settle3["Transaction 3: Ken pays Sarah RM 40"]
+
+  Settle1 --> UI["Render Who-Owes-Whom UI Cards<br/>with '[ Mark Paid ]' Buttons"]
+  Settle2 --> UI
+  Settle3 --> UI
+```
+
+---
+
+### 4.7 Function 7: Real-Time Team Group Chat & Broadcast Feed
+**Description:** Powers intra-room communication via Supabase Realtime websocket channels. Unifies human chat messages with automatic system broadcast alerts whenever an itinerary slot is replanned or an expense is recorded.
+
+```mermaid
+flowchart TD
+  subgraph ROOM_CLIENTS["Connected Trip Room Members (PWA & Desktop Web)"]
+    ClientA["Member A (Alex)"]
+    ClientB["Member B (Sarah)"]
+    ClientC["Member C (Bob)"]
+  end
+
+  subgraph SUPABASE_RT["Supabase Realtime Engine (Channel: 'trip_room:123')"]
+    Broadcaster["WebSocket Broadcast Hub"]
+  end
+
+  subgraph EVENTS["Event Triggers inside Trip Room"]
+    HumanMsg["Human Message: 'Ready to leave hotel?'"]
+    SharePlace["Share Place Pin: 'Let's go to Toh Soon Cafe'"]
+    ReplanAlert["⚡ System Alert: '10:30 AM slot patched to Blue Mansion'"]
+    SpendAlert["💵 System Alert: 'Sarah logged RM 100 for Mansion Tickets'"]
+  end
+
+  HumanMsg --> Broadcaster
+  SharePlace --> Broadcaster
+  ReplanAlert --> Broadcaster
+  SpendAlert --> Broadcaster
+
+  Broadcaster <--> ClientA
+  Broadcaster <--> ClientB
+  Broadcaster <--> ClientC
+
+  ClientA --> ChatUI["Team Chat Tab / Drawer:<br/>- Text bubbles with timestamps<br/>- Interactive place cards with map links<br/>- System event notice pills"]
+  ClientB --> ChatUI
+  ClientC --> ChatUI
+```
+
+---
+
+## 5. End-to-End User Flow (14 Screens)
 
 **Logic:** Strict sequential flow across all 14 screens. Users cannot trigger Gemini generation until destination is confirmed and real places exist.
 
@@ -251,13 +432,13 @@ flowchart TD
   S03 --> S10["10 Profile<br/>Default pace, dietary, friends"]
 ```
 
-Bottom navigation tabs (always accessible): **Trips · Map · Plan · Money · You · Chat**
+Bottom navigation tabs (always accessible in PWA): **Trips · Map · Plan · Money · You · Chat**
 
 ---
 
-## 5. Idea Evolution
+## 6. Idea Evolution
 
-**Logic:** Each pivot deliberately removed a **source of untrue data**. Product guardrails (no fake pins, no invented shops, no live fares) are the deliberate outcome of this architectural progression.
+**Logic:** Each architectural pivot deliberately eliminated a **source of untrue data**. Product guardrails (no fake pins, no invented shops, no live fares) are the deliberate outcome of this progression.
 
 ```mermaid
 flowchart LR
@@ -269,13 +450,11 @@ flowchart LR
 | --- | --- | --- | --- |
 | **V1** | Integrated live flight, hotel, and attraction booking APIs | API keys fail, rate limits hit, and failure modes produce fake prices and broken demo flows. | In-app ticket checkout, dynamic live fares, fake availability counters. |
 | **V2** | Free-text search geocoded via public Nominatim / Google Places | Public Nominatim enforces 1 req/s, fails on informal names, and drops pins in the wrong country. | Unreliable commercial geocoding APIs and misplaced coordinate pins. |
-| **V3 (Final)** | User searches via **open-source Photon (OSM autocomplete)** or **taps map** for custom spots. Gemini schedules **only existing place IDs**. | User-friendly search without paying for Google Maps; zero API breakage; 100% truthful data under hackathon conditions. | Hallucinated shops, invented venue names, seed cities, fake reviews. |
-
-V3 stack: Nuxt 3 PWA, Vue 3, Drizzle ORM, Nitro server engine, pnpm, Node, Supabase Auth/Postgres/RLS, Google Gemini, Leaflet + OSM tiles + Photon fuzzy geocoder (`<ClientOnly>`).
+| **V3 (Final)** | User searches via **open-source Photon (OSM autocomplete)** or **taps map** for custom spots. Gemini schedules **only existing place IDs**. | High reliability, fast fuzzy autocomplete, and zero external booking lock-in. | Hallucinated shops, invented venue names, seed cities, fake reviews. |
 
 ---
 
-## 6. Alternative Ideas Comparison
+## 7. Alternative Ideas Comparison
 
 **Logic:** Evaluated three distinct paradigms for the hackathon brief. Idea C (Plan B Workspace) was selected because it directly solves the organizational gap without relying on fragile external data.
 
@@ -303,13 +482,11 @@ flowchart TB
 
 ---
 
-## 7. Mindmap
-
-**Logic:** High-density, fully validated Mermaid mindmap capturing the complete Plan B system topology across 8 cohesive structural pillars: Users & Collaboration, Preference Gathering, Alignment & Scheduling, Constrained Gemini Agent, Dual Operating Modes, Map & Money Ledgers, PWA Interface & Screens, and Explicit Anti-Features.
+## 8. System Topology Mindmap
 
 ```mermaid
 mindmap
-  root((Plan B PWA))
+  root((Plan B))
     Users and Collaboration
       Target audience
         University students
