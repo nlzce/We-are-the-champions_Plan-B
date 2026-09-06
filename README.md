@@ -249,9 +249,9 @@ flowchart TD
 flowchart TD
   ClickGen["Traveler taps: 'Generate Itinerary'"] --> CheckCount{"How many places in trip pool?"}
 
-  CheckCount -->|0 Places Added| HaltEngine["🛑 Safety Guardrail Triggered:<br/>'Cannot generate schedule: 0 places in pool.<br/>Please search or tap the map to add places first.'<br/>(Zero fake restaurants or invented prices!)"]
+  CheckCount -->|0 Places Added| HaltEngine["🛑 Safety Guardrail Triggered:<br/>Cannot generate schedule: 0 places in pool.<br/>Please search or tap the map to add places first.<br/>(Zero fake restaurants or invented prices!)"]
 
-  CheckCount -->|Places Exist (Tek Sen, Kek Lok Si...)| PrepareData["Feed Trip Parameters to AI:<br/>- Pinned Places: Kek Lok Si, Tek Sen, Penang Hill<br/>- Lowest Budget Cap: RM 450<br/>- Group Pace: Easy (No rushing)"]
+  CheckCount -->|"Places Exist (Tek Sen, Kek Lok Si...)"| PrepareData["Feed Trip Parameters to AI:<br/>- Pinned Places: Kek Lok Si, Tek Sen, Penang Hill<br/>- Lowest Budget Cap: RM 450<br/>- Group Pace: Easy (No rushing)"]
 
   PrepareData --> GeminiRun["Gemini 2.5 Flash:<br/>Calculates logical travel sequence & estimated times"]
   GeminiRun --> VerifyOutput["Verify All Venue IDs Match Real Pinned Spots"]
