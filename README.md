@@ -8,47 +8,47 @@
 - Yap Chun Hoong
 - Yap Shern Yu
 
-**Track:** Lifestyle · Planning an Escape
-**Problem Statement:** Travel Planner
-**Submission:** Plan B
-**Video file / YouTube title:** `We Are The Champions — Plan B — Planning an Escape`
-**Video Presentation:** [Unlisted Youtube Link]
-**Presentation Slides:** [Public Link]
+**Track:** Lifestyle · Planning an Escape  
+**Problem Statement:** Travel Planner  
+**Submission:** Plan B  
+**Video file / YouTube title:** `We Are The Champions — Plan B — Planning an Escape`  
+**Video Presentation:** [Unlisted Youtube Link]  
+**Presentation Slides:** [Public Link]  
 
 ---
 
 ## 1. Project Overview
 
 ### The Problem
-Trip planning today is fragmented across five disconnected apps and an unstructured group chat: flight confirmations are buried in email, shared budgets rot in Splitwise, day lists sit in Apple Notes, and real-time debates get lost in WhatsApp.
+Trip planning today is scattered across multiple disconnected tools: flight tickets stay buried in email, shared expenses get logged in Splitwise days late, wishlists live in Apple Notes, and real-time debates get lost in group chats.
 
-This fragmentation causes three fundamental organizational breakdowns:
-1. **Unstructured Preferences Lost in Chat:** Availability dates, personal budgets, and deal-breakers (雷区) are discussed verbally. Without a structured way to normalize and intersect them, groups compromise upward into overspending or settle on dates that do not work for everyone.
-2. **Fragile, Unconstrained AI & Fake Data:** Generic travel bots hallucinate non-existent shops, closed cafes, and fabricated ticket prices, while commercial booking APIs introduce strict rate limits, unexpected checkout failures, and demo fragility.
-3. **Single-Point Fragility During the Trip:** When a venue is unexpectedly closed or transit is delayed by 30 minutes, traditional tools force users to manually reshuffle the rest of the multi-day trip, frequently cascading into missed hotel check-ins or abandoned plans.
+This fragmentation leads to three major issues for group travel:
+1. **Unstructured Preferences Lost in Chat:** Availability dates, personal budgets, and deal-breakers are discussed informally in group messaging. Without a structured way to normalize and intersect them, groups often compromise upward into overspending or settle on dates that do not work for everyone.
+2. **Unconstrained AI & Brittle Booking APIs:** Generic travel chatbots frequently hallucinate fictional restaurants, closed attractions, and inaccurate prices, while commercial flight and hotel booking APIs introduce strict rate limits, checkout failures, and demo fragility.
+3. **Single-Point Fragility During the Trip:** When a flight is delayed or an afternoon cafe is closed, existing apps force travelers to manually rearrange their entire multi-day schedule, which can easily cascade into missed hotel check-ins or ruined plans.
 
-**Stakeholders:** University students, young working adults, and small friend groups (solo or 2–6 travelers) embarking on short, phone-first weekend or holiday escapes.
+**Stakeholders:** University students, young working adults, and small friend groups (traveling solo or in groups of 2–6) looking for a phone-first tool to coordinate weekend getaways and holiday trips.
 
 **Existing Apps & Why They Fall Short:**
-- **Wanderlog / TripIt:** Primarily serve individual corporate travelers or heavy itineraries by parsing email booking confirmations. They are bloated, require paid subscriptions for real collaboration, ignore personal budget ceilings, and provide zero automated mechanisms to patch a single disrupted hour on the fly.
-- **Splitwise:** Strictly an accounting tool after expenses occur. It has no integration with daily itinerary slots, meaning groups cannot enforce an upfront budget ceiling before money is spent.
-- **Google Maps Lists:** Great for saving bookmarks, but completely static. They do not calculate date overlaps, cannot sequence stops based on group pace, and cannot re-route an afternoon when a plan breaks.
+- **Wanderlog / TripIt:** Geared toward individual business travelers or heavy itineraries built by parsing email receipts. They feel bloated on mobile, lock essential collaboration features behind paid subscriptions, ignore individual budget ceilings, and provide no automated way to patch a single disrupted hour on the fly.
+- **Splitwise:** Strictly a retroactive expense tracker after money is spent. It has no connection to daily itinerary slots, meaning groups cannot enforce an upfront budget ceiling before overspending happens.
+- **Google Maps Lists:** Helpful for bookmarking places, but completely static. They cannot calculate overlapping dates, sequence stops by travel pace, or dynamically adjust an afternoon schedule when unexpected delays occur.
 
 ### Our Solution
-Plan B is a unified trip workspace and constrained AI agent that coordinates travelers from initial alignment to post-trip settlement—whether traveling solo or with a group. It captures individual preferences, locks the group budget ceiling strictly to the lowest personal cap, and displays a grounded map powered by open-source OpenStreetMap and Photon geocoding without external booking dependencies. During transit, its dedicated Trip Mode tracks stops with live countdowns; if a venue is delayed or skipped, Plan B surgically rewrites only that disrupted time slot while keeping booked flights and hotel stays permanently locked.
+Plan B is a phone-first Progressive Web App (PWA) and grounded AI assistant designed to coordinate travelers from initial preference alignment to post-trip expense settlement. It gathers individual preferences, locks the group budget ceiling to the lowest personal budget so no one is priced out, and displays an open-source map powered by OpenStreetMap and Photon geocoding without external booking dependencies. During the trip, its dedicated Trip Mode tracks stops with live arrival countdowns; if a venue is delayed or closed, Plan B replaces only that specific time slot while keeping booked flights and hotel reservations permanently locked.
 
 #### Core Feature-Set:
-1. **Clean Identity & Rooms:** Frictionless Supabase authentication. Solo or group trip rooms that can start completely empty without fake preloaded data.
-2. **7-Parameter Preference Form:** Captures destination wishlist, dates, budget cap, travel pace (relaxed/moderate/intense), interests, deal-breakers (雷区), and must-visit spots.
-3. **Hidden Destination Privacy Toggle:** A traveler can mark a destination hidden from peers. It never drops a pin on the shared map; only the trip's Gemini agent reads it privately server-side to build surprise options without revealing its name.
-4. **Automated Alignment Engine:** System calculates shared date windows, aggregates deal-breakers, locks the group budget ceiling to `min(individual caps)`, and requires group destination confirmation before itinerary generation unlocks.
-5. **Grounded Dual-Mode Map:** Displays only public, member-added points. Travelers search places via open-source Photon fuzzy autocomplete or tap the map directly for custom coordinates.
-6. **Constrained Gemini Agent:** Scoped strictly to one trip room. Generates itineraries using existing place IDs only; immediately halts if 0 places exist and never hallucinates venues or prices.
-7. **Dual Operating Modes:** Clean separation between **Plan Mode** (pre-trip alignment & scheduling) and **Trip Mode** (on-the-ground live execution & countdowns).
-8. **Single-Slot Replan (Core Innovation):** Marking a delay or cancellation rewrites *only* that single affected time slot using available places, while booked hotel stays and flights remain permanently locked.
-9. **Itinerary-Tied Debt Ledger:** Expenses are logged directly against specific itinerary items, calculating a minimal-transaction "who owes whom" debt graph.
-10. **Real-time Team Group Chat:** In-room chat powered by Supabase Realtime where members discuss plans, share place cards, and receive automated system event alerts (delays, replans, expense logs).
-11. **Cross-Platform Responsive Interface:** 390px mobile-first PWA with a 6-tab persistent bottom bar (`Trips · Map · Plan · Money · You · Chat`) and a responsive 3-column desktop web command center.
+1. **Clean Identity & Rooms:** Lightweight authentication via Supabase Auth. Solo or group trip rooms can start completely empty without preloaded mock data.
+2. **7-Parameter Preference Form:** Gathers destination ideas, travel dates, personal budget caps, preferred travel pace (relaxed, balanced, or intense), interests, deal-breakers, and must-visit spots.
+3. **Hidden Destination Privacy Toggle:** Allows a traveler to keep a destination suggestion private from peers for surprise trips. It never drops a pin on the shared map; only the trip's Gemini agent reads it server-side to build the route without revealing its name.
+4. **Automated Alignment Engine:** Automatically calculates overlapping date windows, aggregates deal-breakers, locks the group budget ceiling to the lowest member cap (`min(individual caps)`), and requires destination confirmation before itinerary generation unlocks.
+5. **Grounded Dual-Mode Map:** Displays only public, member-added places. Travelers can search places with fast Photon fuzzy autocomplete or tap directly on the map to pin custom coordinates.
+6. **Constrained Gemini Agent:** Scoped strictly to a single trip room. Generates day-by-day itineraries using existing place IDs only; immediately halts if zero places exist, preventing hallucinated venues or fake prices.
+7. **Dual Operating Modes:** Clear separation between **Plan Mode** (pre-trip alignment & schedule generation) and **Trip Mode** (live on-the-ground tracking & next-stop countdowns).
+8. **Single-Slot Replanning (Core Innovation):** Marking a stop as delayed or skipped prompts Gemini to replace *only* that specific time slot using available places, while booked hotel stays and flights remain untouched.
+9. **Itinerary-Tied Debt Ledger:** Expenses are logged directly against specific itinerary stops, automatically generating a minimal-transaction "who owes whom" debt graph.
+10. **Real-Time Team Group Chat:** In-room messaging powered by Supabase Realtime where members can chat, share interactive place cards, and receive automatic broadcast alerts for replanned stops and logged expenses.
+11. **Mobile PWA Interface:** Built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), optimized for quick one-handed mobile interactions.
 
 ---
 
@@ -58,20 +58,19 @@ Plan B is a unified trip workspace and constrained AI agent that coordinates tra
 
 | Idea | Status | Why it was Kept / Dropped |
 | :--- | :--- | :--- |
-| **A. Plan B Grounded Collaborative Workspace (Chosen)** | **Kept (Chosen)** | Directly solves the root organizational gap: replaces 5 fragmented tools with one trusted record for people, money, and days. Scoped Gemini agent schedules only member-added places, eliminating AI hallucinations and brittle booking API failures while delivering surgical single-slot replanning. |
-| **B. Vercel Serverless + Supabase Cloud Architecture (Chosen)** | **Kept (Chosen)** | Delivers native full-stack Nuxt 3 (Nitro) SSR compatibility, PostgreSQL Row-Level Security (RLS) for cryptographic isolation of hidden destinations, and managed Realtime CDC websockets for instant group chat and live itinerary broadcast without managing stateful websocket server clusters. |
-| **C. Grounded Dual-Mode Map: Photon Search + Tap-to-Pin (Chosen)** | **Kept (Chosen)** | Combines open-source Photon geocoding (OpenStreetMap data) for fast, free-text fuzzy autocomplete with direct map tapping for custom points. Provides a responsive, 100% reliable mapping experience with zero external booking dependencies. |
-| **D. Real-time Team Group Chat with Live Broadcast Feed (Chosen)** | **Kept (Chosen)** | Consolidates trip communication inside the room via Supabase Realtime websockets. Eliminates switching to external messaging apps by allowing members to share place cards and receive automated broadcast notifications whenever a slot is replanned or an expense is logged. |
-| **E. Cloudflare Architecture (Pages + Workers + D1 + KV)** | **Dropped** | Explored for edge compute latency and zero cold starts. Dropped because Cloudflare Workers' V8 isolate runtime imposes strict Node.js API limitations that complicate standard SSR dependencies and cryptographic libraries. Furthermore, Cloudflare D1 (SQLite at the edge) lacks PostgreSQL Row-Level Security (RLS) policies essential for server-side hidden destination privacy isolation, and lacks native Change-Data-Capture (CDC) websocket channels for room-wide group chat and live disruption feeds (requiring complex custom Durable Objects / WebSocket hibernation orchestration). Vercel Serverless + Supabase was chosen as the superior, production-ready stack for full Node.js Nitro compatibility, battle-tested Postgres RLS, and managed Realtime channels. |
-| **F. All-in-One Booking Super-App with Live Flight/Hotel APIs** | **Dropped** | Commercial booking APIs impose rigid rate limits, high quota costs, and frequent checkout error states. Group travelers book accommodations individually or outside apps anyway; building checkout flows introduces fake availability and brittle failure modes. |
-| **G. Conversational Free-Form Travel Chatbot** | **Dropped** | Unconstrained LLMs generate generic, hallucinated tourist itineraries with fake venue names, inaccurate pricing, and zero awareness of real group constraints or lowest-budget ceilings. |
-| **H. Strict Public Nominatim Geocoder** | **Dropped** | Public Nominatim enforces a strict 1 request/second fair-use rate limit which breaks real-time search-as-you-type autocomplete and often misplaces pins for informal local venue names. Replaced by Photon. |
+| **A. Plan B Grounded Collaborative Workspace (Chosen)** | **Kept (Chosen)** | Solves the core group coordination problem by replacing fragmented tools with a single trusted record for people, money, and days. The constrained Gemini agent only sequences places added by members, eliminating AI hallucinations and brittle booking API dependencies while delivering single-slot replanning. |
+| **B. Vercel Serverless + Supabase Cloud Architecture (Chosen)** | **Kept (Chosen)** | Provides native Nuxt 3 (Nitro) serverless execution, PostgreSQL Row-Level Security (RLS) to enforce hidden destination privacy, and managed Realtime WebSockets for instant in-room group chat and live trip updates without maintaining dedicated websocket servers. |
+| **C. Grounded Dual-Mode Map: Photon Search + Tap-to-Pin (Chosen)** | **Kept (Chosen)** | Combines open-source Photon geocoding (OpenStreetMap data) for fast, free-text fuzzy search autocomplete with direct map canvas tapping for custom coordinates. Delivers a reliable, responsive mapping experience without commercial API keys or vendor lock-in. |
+| **D. Real-time Team Group Chat with Live Broadcast Feed (Chosen)** | **Kept (Chosen)** | Keeps communication directly inside the trip room via Supabase Realtime. Eliminates switching to external messaging apps by allowing members to share place cards and receive automated broadcast alerts whenever a slot is replanned or an expense is recorded. |
+| **E. All-in-One Booking Super-App with Live Flight/Hotel APIs** | **Dropped** | Commercial booking APIs introduce rigid rate limits, high quota costs, and frequent checkout failures. Group travelers typically book flights and accommodations separately outside the app anyway; embedding ticket checkouts adds fake availability and unnecessary fragility. |
+| **F. Conversational Free-Form Travel Chatbot** | **Dropped** | Unconstrained LLMs tend to generate generic tourist schedules with non-existent venue names, inaccurate pricing, and zero awareness of real group constraints or lowest-budget limits. |
+| **G. Strict Public Nominatim Geocoder** | **Dropped** | Public Nominatim enforces a strict 1 request per second fair-use limit that breaks smooth search-as-you-type autocomplete, and often struggles with informal local venue names. Replaced with Photon. |
 
 ---
 
 ### 2.2 Ideation Boards & System Architecture Diagrams
 
-All architectural workflows and domain models are embedded natively in Mermaid for direct GitHub rendering and presentation reviews.
+All system workflows and domain models are embedded natively in Mermaid for direct GitHub rendering and slide presentations.
 
 #### 2.2.1 Problem Tree
 **Logic:** Three root organizational failures combine into one core breakdown: **the lack of a single trusted trip record**. This produces four major downstream failure modes: overspending, unaligned dates, hallucinated venues, and trip collapse after a minor transit delay.
@@ -116,7 +115,7 @@ flowchart TB
 ---
 
 #### 2.2.2 System Boundary Use Case Diagram
-**Logic:** Formal UML representation of the Plan B workspace boundary, distinguishing interactions between **Travelers**, the **Room Owner**, and the autonomous, trip-scoped **Gemini Agent**.
+**Logic:** Formal UML representation of the Plan B PWA workspace boundary, distinguishing interactions between **Travelers**, the **Trip Owner**, and the autonomous, trip-scoped **Gemini Agent**.
 
 ```mermaid
 flowchart LR
@@ -131,7 +130,7 @@ flowchart LR
 
   Owner -.->|inherits| Traveler
 
-  subgraph Boundary["System Boundary: Plan B Workspace (PWA & Desktop Web)"]
+  subgraph Boundary["System Boundary: Plan B PWA Workspace"]
     subgraph UC_Auth["1. Account & Profile"]
       UC01(["UC01: Register & Login<br/>(No mock/seed accounts)"]):::usecase
       UC02(["UC02: Manage Profile<br/>(Default pace, dietary, friends)"]):::usecase
@@ -197,23 +196,23 @@ flowchart LR
 | Use Case ID | Name | Actor(s) | Preconditions & Business Rules |
 | :--- | :--- | :--- | :--- |
 | **UC01** | Register & Login | Traveler | Clean user authentication via Supabase Auth. Zero pre-seeded or fake users. |
-| **UC02** | Manage Profile | Traveler | Sets personal defaults for travel pace, dietary requirements, and access to friends. |
+| **UC02** | Manage Profile | Traveler | Sets personal defaults for travel pace, dietary requirements, and friend connections. |
 | **UC03** | Create / View Room | Traveler | Can create solo trips or group rooms. Trips list is allowed to be empty initially. |
 | **UC04** | Join via Share Link | Traveler | Anyone with the link can join; mutual friending is explicitly not required. |
-| **UC05** | Invite from Friends | Traveler | Pulls from the user's friend connection list. |
+| **UC05** | Invite from Friends | Traveler | Invites travelers directly from the user's friend connection list. |
 | **UC06** | Submit Preference Form | Traveler | Submits destination wish, date window, budget ceiling, pace, interests, deal-breakers, and must-visits. |
 | **UC07** | Set Hidden Destination | Traveler | Destination toggle hides the place from peers and map display. Only Gemini reads it server-side. |
-| **UC08** | Add Place (Search / Tap) | Traveler | Search places with Photon fuzzy autocomplete (OSM) or click map to drop custom pin. Open-source geocoding with no booking lock-in. |
-| **UC09** | View Group Alignment | Traveler | Shows computed date overlaps, the group budget ceiling (`min(individual caps)`), and deal-breakers. |
-| **UC10** | Confirm Destination | Trip Owner / Group | Prerequisite: Destination must be locked before daily itinerary generation is unlocked. |
+| **UC08** | Add Place (Search / Tap) | Traveler | Search places with Photon fuzzy autocomplete (OSM) or tap map to drop custom pin without external booking dependencies. |
+| **UC09** | View Group Alignment | Traveler | Displays computed date overlaps, the group budget ceiling (`min(individual caps)`), and deal-breakers. |
+| **UC10** | Confirm Destination | Trip Owner / Group | Prerequisite: Destination must be confirmed by the group before daily itinerary generation unlocks. |
 | **UC11** | Generate Itinerary | Gemini Agent | Sequences member-added place IDs into days. Gemini is forbidden from inventing place names or prices. |
-| **UC12** | Enforce Guardrail | Gemini Agent | If zero member-added places exist, agent halts immediately and asks members to add places. |
-| **UC13** | View Next Stop | Traveler | Displays current stop, arrival time, and countdown in Trip Mode. |
+| **UC12** | Enforce Guardrail | Gemini Agent | If zero member-added places exist, agent halts immediately and prompts members to add places. |
+| **UC13** | View Next Stop | Traveler | Displays current stop, arrival time, and live countdown in Trip Mode. |
 | **UC14** | Mark Delay / Cannot-Go | Traveler | Flags a specific itinerary slot as disrupted during transit. |
-| **UC15** | Replan Single Slot | Gemini Agent | Rewrites *only* the affected time block using remaining valid place IDs. Locked stays and flights remain fixed. |
+| **UC15** | Replan Single Slot | Gemini Agent | Rewrites only the affected time block using remaining valid place IDs. Locked stays and flights remain fixed. |
 | **UC16** | Log Itemized Expense | Traveler | Logs actual spend tied directly to an itinerary item. |
-| **UC17** | Settle Who-Owes-Whom | Traveler | Computes debt graph and splits without dynamic ticket lookup. |
-| **UC18** | Team Group Chat | Traveler | Real-time chat powered by Supabase Realtime; share place cards, discuss plans, and receive live system disruption notices. |
+| **UC17** | Settle Who-Owes-Whom | Traveler | Computes debt graph and minimal transfers without dynamic ticket lookup. |
+| **UC18** | Team Group Chat | Traveler | Real-time chat powered by Supabase Realtime; share place cards, discuss plans, and receive live system disruption alerts. |
 
 ---
 
@@ -311,15 +310,15 @@ flowchart TD
 flowchart TD
   User["Traveler (Member A)"] --> InputDest["Input Wishlist: 'Surprise Beach Villa'"]
   InputDest --> Toggle["Toggle: [ Hide Destination from Group ]"]
-
+  
   Toggle --> ClientUI["Client UI State (Member A)"]
   Toggle --> ServerAPI["Server API: /api/preferences/submit"]
 
   ServerAPI --> DB[(Supabase PostgreSQL)]
   DB --> RLS["Row-Level Security (RLS) Policy<br/>is_hidden = true"]
 
-  RLS -->|Peers (Member B & C)| BlockPeers["Map Query: Excluded from pins<br/>Peers cannot see coordinate or venue name"]
-  RLS -->|Member A (Owner)| AllowOwner["Member A can see private indicator badge"]
+  RLS -->|Peers: Member B and C| BlockPeers["Map Query: Excluded from pins<br/>Peers cannot see coordinate or venue name"]
+  RLS -->|Member A: Owner| AllowOwner["Member A can see private indicator badge"]
 
   DB --> ServerGemini["Trip-Scoped Gemini Server Route<br/>(Reads is_hidden destination securely)"]
   ServerGemini --> Prompt["System Instruction Guardrail:<br/>'Factor in private destination characteristics,<br/>but NEVER state its name in outputs.'"]
@@ -334,7 +333,7 @@ flowchart TD
 ```mermaid
 flowchart TD
   UserAction{"How Traveler Adds Place"}
-
+  
   UserAction -->|Type in Search Bar| SearchInput["Search Query: 'Toh Soon Cafe'"]
   SearchInput --> PhotonAPI["Photon Fuzzy Geocoder API<br/>(OpenStreetMap by Komoot)"]
   PhotonAPI --> AutocompleteList["Dropdown Autocomplete List<br/>Real venues with address & district"]
@@ -408,7 +407,7 @@ flowchart TD
   Log2["Expense 2: RM 100 Tickets<br/>Paid by Sarah · Split 4 ways (RM 25 each)"] --> Ledger
 
   Ledger --> NetCalc["Calculate Net Balance for Each Member:<br/>Net = Total Paid - Fair Share"]
-
+  
   NetCalc --> B1["Alex: Paid RM 60, Share RM 40 ➔ Net: +RM 20"]
   NetCalc --> B2["Sarah: Paid RM 100, Share RM 40 ➔ Net: +RM 60"]
   NetCalc --> B3["Bob: Paid RM 0, Share RM 40 ➔ Net: -RM 40"]
@@ -435,7 +434,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  subgraph ROOM_CLIENTS["Connected Trip Room Members (PWA & Desktop Web)"]
+  subgraph ROOM_CLIENTS["Connected Trip Room Members (Mobile PWA)"]
     ClientA["Member A (Alex)"]
     ClientB["Member B (Sarah)"]
     ClientC["Member C (Bob)"]
@@ -502,16 +501,14 @@ Bottom navigation tabs (always accessible in PWA): **Trips · Map · Plan · Mon
 ```mermaid
 flowchart LR
   V1["V1: Map + Booking APIs"] --> V2["V2: Strict Nominatim (1 req/s)"]
-  V2 --> V3["V3: Cloudflare Edge Stack"]
-  V3 --> V4["V4 FINAL: Plan B<br/>Vercel + Supabase + OSM + Photon"]
+  V2 --> V3["V3 FINAL: Plan B PWA<br/>Vercel + Supabase + OSM + Photon"]
 ```
 
 | Architecture Pivot | What We Explored | Why It Failed / Was Discarded | Source of Untrue Data / Complexity Removed |
 | :--- | :--- | :--- | :--- |
 | **V1: Booking Super-App** | Integrated live flight, hotel, and attraction booking APIs | API keys fail, rate limits hit, and failure modes produce fake prices and broken demo flows. | In-app ticket checkout, dynamic live fares, fake availability counters. |
 | **V2: Fragile Geocoding** | Free-text search geocoded via public Nominatim / Google Places | Public Nominatim enforces 1 req/s, fails on informal names, and drops pins in the wrong country. | Unreliable commercial geocoding APIs and misplaced coordinate pins. |
-| **V3: Edge-Only Serverless (Cloudflare Stack)** | Cloudflare Pages + Workers + D1 (SQLite) + KV | D1 lacks PostgreSQL Row-Level Security (RLS) required for hidden destination privacy; Workers V8 isolates lack full Node.js API compatibility for SSR libraries; lacks native CDC websockets for real-time group chat without expensive Durable Objects state orchestration. | Edge runtime compatibility friction, insecure manual data filtering, and custom websocket server management. |
-| **V4 (Final Production Stack): Plan B on Vercel + Supabase** | Nuxt 3 (Nitro) on Vercel Serverless + Supabase (PostgreSQL with RLS, Auth, Realtime CDC) + Leaflet OSM & Photon geocoder + Scoped Gemini Agent. | 100% buildable, native Vue SSR hydration, battle-tested PostgreSQL RLS isolation, instant managed websockets for group chat, fast fuzzy OSM autocomplete, and 0-place halt guardrail. | Hallucinated shops, invented venue names, seed cities, fake reviews, checkout API drop-offs, and state synchronization leaks. |
+| **V3 (Final Production Stack): Plan B on Vercel + Supabase** | Nuxt 3 (Nitro) on Vercel Serverless + Supabase (PostgreSQL with RLS, Auth, Realtime CDC) + Leaflet OSM & Photon geocoder + Scoped Gemini Agent. | 100% buildable, native Vue SSR hydration, battle-tested PostgreSQL RLS isolation, instant managed websockets for group chat, fast fuzzy OSM autocomplete, and 0-place halt guardrail. | Hallucinated shops, invented venue names, seed cities, fake reviews, checkout API drop-offs, and state synchronization leaks. |
 
 ---
 
@@ -693,32 +690,31 @@ Plan B System Topology
 
 ### Key Screens & User Interactions
 
-The user interface is designed with complete feature parity across two viewing modes: a **mobile-first PWA layout (390px viewport)** optimized for on-the-ground mobile usage with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), and a **responsive 3-column desktop web layout** that arranges the itinerary agenda, the interactive map canvas, and the real-time group chat side-by-side.
+Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), giving travelers instant access to every part of their trip on the move.
 
-1. **Screen 03: Trip Home & Alignment Hub**
-   - *PWA (Mobile):* Single-column scrollable command center. Displays the 4/4 member submission progress bar, the computed overlapping date window (`Oct 12–15`), the locked group budget ceiling (`RM 450/pax`, strictly derived from the lowest individual cap), and the green destination confirmation lock badge. Features a prominent segmented control toggle between Plan Mode and Trip Mode.
-   - *Desktop Web:* Expands the alignment dashboard into the left command panel, providing instant visibility into member availability and budget bars while preserving the main workspace for quick actions.
-2. **Screen 04: Preference Form & Hidden Destination Privacy Toggle**
-   - *PWA (Mobile):* Structured 7-point vertical form. Travelers enter their dates, budget ceiling, pace pills (Relaxed / Balanced / Intense), and deal-breakers. Activating the "Hide destination from group" toggle isolates the destination: it never renders on peers' maps, passes secretly to Gemini server-side, and is strictly shielded from being named.
-   - *Desktop Web:* Form appears as a centered modal with real-time field validation and explanatory tooltips explaining how the privacy shield functions.
-3. **Screen 05: Grounded Dual-Mode Map**
-   - *PWA (Mobile):* Full-screen interactive Leaflet OSM map showing member-added public pins (1–6). Travelers type in the top Photon search bar for instant fuzzy autocomplete to auto-center and pin venues, or tap directly on the map canvas to drop custom coordinates. Selecting a pin slides up a bottom drawer sheet with venue details and an "+ Add to Pool" button.
-   - *Desktop Web:* Map renders in the center column alongside an always-open left sidebar listing all places in the trip pool, allowing drag-and-drop or click-to-center functionality.
-4. **Screen 06: Day-by-Day Grounded Itinerary**
-   - *PWA (Mobile):* Chronological timeline constructed strictly from member-added place IDs. Shows arrival times, venue tags, and walk/drive transit estimates. Crucially, booked flights and hotel check-ins are badged with a prominent green lock icon: `🔒 Locked Stay (Never moved by replan)`.
-   - *Desktop Web:* Displays a multi-day kanban view where each day is a vertical column, allowing side-by-side schedule comparison.
-5. **Screen 07: Live Trip Mode & Next Stop Countdown**
-   - *PWA (Mobile):* On-the-ground live execution screen. Features a live pulsating status dot, an arrival countdown card (*"NEXT STOP IN 28 MINS: Peranakan Mansion"*), a quick "+ Log Expense" button, and two prominent disruption buttons: `[ ⚠️ Delayed (+30m) ]` and `[ ❌ Cannot Go / Skip ]`.
-   - *Desktop Web:* Embeds the live status card in a persistent floating top header while keeping the current day's map route highlighted.
-6. **Screen 12: Single-Slot Replan Modal (The Plan B Twist)**
-   - *PWA (Mobile):* Triggered instantly when a stop is marked delayed or skipped. Highlights the disrupted time slot in red, displays a prominent green banner confirming locked hotel/flight bookings are 100% protected, and presents 3 alternative replacements sourced strictly from existing member places. Tapping "Confirm Patch" rewrites only that slot.
-   - *Desktop Web:* Opens a side-by-side comparison modal showing the original timeline, the isolated disrupted slot, and the updated schedule preview before confirming.
-7. **Screen 08: Money & Debt Ledger**
-   - *PWA (Mobile):* Transparent financial tracking. Displays a top budget gauge showing current per-person spend against the locked group ceiling. Below, the Who-Owes-Whom settlement matrix presents minimal peer-to-peer transaction cards (*"Bob owes Alex RM 15.00"* with a `[ Mark Paid ]` button), resolving group debts without separate accounting apps.
-   - *Desktop Web:* Renders an itemized expense ledger table on the left and the interactive visual settlement graph on the right.
-8. **Screen 13: Real-Time Team Group Chat**
-   - *PWA (Mobile):* Dedicated in-room messaging tab (`Chat` on the far right of the 6-tab bottom bar). Team members discuss ideas in real time, share interactive place cards directly into the message feed, and receive automatic system broadcast banners whenever a slot is replanned or a new expense is logged.
-   - *Desktop Web:* Positioned as a persistent collapsible right rail (320px width), allowing real-time communication without ever navigating away from the active map or itinerary view.
+1. **Screen 03: Trip Home & Alignment Hub**  
+   The collaborative command center. It shows group readiness (e.g. 4/4 members completed), overlapping travel dates, the locked group budget ceiling (capped to the lowest member's personal limit), and the destination lock status, with a one-tap toggle between Plan Mode and Trip Mode.
+
+2. **Screen 04: Preference Form & Hidden Destination**  
+   A clean intake form for travel dates, budget limits, pace preferences, and deal-breakers. Includes a "Hide destination" toggle for surprise trips, allowing Gemini to factor the destination into the itinerary server-side without displaying its name or dropping a pin on peers' maps.
+
+3. **Screen 05: Grounded Dual-Mode Map**  
+   An interactive Leaflet map that shows only member-added places. Travelers can quickly search venues using Photon fuzzy autocomplete to pin spots automatically, or tap anywhere on the map canvas to drop custom coordinates.
+
+4. **Screen 06: Day-by-Day Grounded Itinerary**  
+   A chronological timeline constructed strictly from places added by the group. Key travel anchors like booked flights and hotel check-ins are badged with a locked stay icon so they are never shifted during schedule replans.
+
+5. **Screen 07: Live Trip Mode & Next Stop**  
+   The active on-the-ground travel screen. Features an arrival countdown to the next destination, a quick button to log expenses on the spot, and one-tap buttons to report a delay (+30m) or mark a stop as skipped.
+
+6. **Screen 12: Single-Slot Replan Modal**  
+   Triggered whenever a stop is marked delayed or skipped. Highlights the disrupted time slot and suggests 3 replacement candidates from the group's place pool to patch only that specific hour, keeping the rest of the day and locked reservations intact.
+
+7. **Screen 08: Money & Debt Ledger**  
+   Tracks group spending against the shared budget ceiling and calculates an automated "who owes whom" settlement matrix to resolve debts in the fewest possible transfers without needing external accounting apps.
+
+8. **Screen 13: Real-Time Team Group Chat**  
+   A dedicated in-room group chat (accessible via the `Chat` tab) where members talk in real time, share interactive place cards directly into the conversation, and receive automatic broadcast notices whenever a stop is replanned or an expense is logged.
 
 ---
 
@@ -730,15 +726,15 @@ The user interface is designed with complete feature parity across two viewing m
 | **Group Preference Alignment** | Weak; assumes one person plans everything | Endless unstructured debates in chat | Single-user prompt; no group context | **Structured 7-point form + automated overlap engine** |
 | **Budget Enforcement** | Passive cost display; ignores caps | Retroactive accounting after overspending | Ignores budgets or invents fake costs | **Upfront group ceiling locked to lowest individual cap** |
 | **Surprise / Private Wishlists** | Non-existent; everything is public | Leaked immediately in group chat | N/A | **Hidden destination toggle (server-side Gemini isolation)** |
-| **Mid-Trip Disruption Response** | Manual multi-day rescheduling | Panic in chat; manual reshuffling | Re-generates entire itinerary from scratch | **Surgical single-slot replan (preserves locked stays/flights)** |
+| **Mid-Trip Disruption Response** | Manual multi-day rescheduling | Panic in chat; manual reshuffling | Re-generates entire itinerary from scratch | **Single-slot replanning (preserves locked stays/flights)** |
 | **Expense Settlement** | Requires paid tier or external app | Separate app disconnected from agenda | None | **In-room debt graph tied directly to itinerary items** |
 | **Team Communication** | External (WhatsApp / Telegram) | Fragmented across chat history | Single-player chatbot session | **In-room group chat with live itinerary broadcast** |
 
-### Novel Features & The Architectural Twist:
+### Novel Features & Architectural Highlights:
 1. **The Lowest-Cap Ceiling (`min(individual caps)`):** Most group trips overspend because the highest-budget member dominates. Plan B programmatically locks the group ceiling to the lowest member cap, ensuring travel remains accessible to everyone in the group.
-2. **Hidden Destination Privacy:** Solves peer friction when planning surprises or sensitive destinations. A member can propose a destination without exposing it on the shared map; Gemini factors it in secretly while being strictly forbidden from naming it.
+2. **Hidden Destination Privacy Shield:** Solves peer friction when planning surprises or sensitive destinations. A member can propose a destination without exposing it on the shared map; Gemini factors it in secretly while being strictly forbidden from naming it.
 3. **The Constrained Gemini Guardrail:** The AI is not an open-ended writer; it is an itinerary optimizer restricted to an allow-list of member place IDs. If zero places exist, it immediately halts. It is architecturally prevented from inventing fake restaurants or prices.
-4. **Surgical Single-Slot Replanning:** When travel disruptions happen, travelers do not need to rewrite the entire trip. Plan B isolates the single broken hour, evaluates candidate replacements from the existing place pool, and patches only that slot—keeping booked flights and hotel reservations permanently locked.
+4. **Single-Slot Replanning:** When travel disruptions happen, travelers do not need to rewrite the entire trip. Plan B isolates the single broken hour, evaluates candidate replacements from the existing place pool, and patches only that slot—keeping booked flights and hotel reservations permanently locked.
 
 ---
 
@@ -762,7 +758,7 @@ The user interface is designed with complete feature parity across two viewing m
 
 ```mermaid
 flowchart TD
-  subgraph CLIENT["Client Layer (Mobile PWA & Desktop Web - 390px / 1440px)"]
+  subgraph CLIENT["Client Layer: Mobile PWA (390px Viewport)"]
     UI["Nuxt 3 PWA UI<br/>(Vue 3 · Pinia · Tailwind)"]
     MapClient["Leaflet OSM Engine<br/>(<ClientOnly> Tile Canvas)"]
     RTClient["Supabase Realtime Client<br/>(Chat & Disruption Webhooks)"]
@@ -819,20 +815,20 @@ flowchart TD
 To ensure 100% technical feasibility, the scope for the build phase is strictly bounded:
 
 #### In-Scope (What We Plan to Build):
-- [x] Full authentication flow with personal travel defaults (pace, dietary restrictions, friends entry).
+- [x] Full authentication flow with personal travel defaults (pace, dietary restrictions, friend connections).
 - [x] Solo and group trip room lifecycle with instant link sharing (no mutual friending required).
 - [x] 7-parameter preference submission form with the "Hidden Destination" privacy toggle.
 - [x] System alignment engine computing date intersections, deal-breaker clashes, and group budget ceiling (`min(individual caps)`).
 - [x] Interactive Leaflet OSM map with Photon fuzzy search autocomplete and direct tap-to-pin coordinate saving.
-- [x] Server-side Gemini itinerary sequencing constrained to existing place IDs, with a hard halt guardrail if 0 places exist.
+- [x] Server-side Gemini itinerary sequencing constrained to existing place IDs, with a hard halt guardrail if zero places exist.
 - [x] Plan Mode (preparation) and Trip Mode (live next-stop countdown) state machine.
-- [x] Surgical Single-Slot Replan modal replacing only the disrupted hour while preserving locked flights and hotel stays.
+- [x] Single-slot replan modal replacing only the disrupted hour while preserving locked flights and hotel stays.
 - [x] Itinerary-tied expense logging with automated who-owes-whom debt graph calculation.
 - [x] Real-time in-room team group chat powered by Supabase Realtime with place card sharing and live disruption broadcast.
-- [x] Mobile-first PWA interface (6 bottom tabs: `Trips · Map · Plan · Money · You · Chat`) responsive to desktop web.
+- [x] Mobile-first PWA interface with persistent 6-tab navigation (`Trips · Map · Plan · Money · You · Chat`).
 
 #### Out-of-Scope (Explicit Anti-Features):
 - ❌ **Commercial Flight & Hotel Booking APIs:** No live ticket checkouts or dynamic inventory scrapers. Bookings are represented as user-entered, locked anchor items.
 - ❌ **Mock Demo Seed Data:** No pre-seeded fake users, sample trips, or canned venue reviews; the app operates entirely on user-entered data.
 - ❌ **Nearby Auto-Scrapers:** The app never pulls unverified external restaurant lists; it schedules only venues intentionally added by travelers.
-- ❌ **Dynamic Currency Fare Speculation:** Expense splitting is based on actual logged receipts, not speculative live foreign exchange scrapers.
+- ❌ **Dynamic Currency Fare Speculation:** Expense splitting is based on actual logged receipts, not speculative live foreign exchange scrapers.\n
