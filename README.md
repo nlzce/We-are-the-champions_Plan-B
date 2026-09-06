@@ -1,9 +1,9 @@
-# Plan B
+# Plan B by we are the champions
 
 > **When Plan A fails, Plan B saves the trip.**
 
 **Track:** Lifestyle · Planning an Escape
-**Team:** We Are The Champions
+**Team:** we are the champions
 **Members:** Tan Poh Zhai, Lee Wai Loong, Yap Chun Hoong, Yap Shern Yu
 
 ---
@@ -38,7 +38,7 @@ College students, young working adults, and small friend groups (2–6 people or
 4. **Real Maps, Zero Fake Venues:** Uses open-source OpenStreetMap with fast Photon autocomplete. Travelers search and tap real places onto their map canvas—the AI only arranges places members actually pinned. If zero places are added, the AI politely halts rather than inventing fake shops.
 5. **The Plan B Rescue (Our Core Twist):** During the trip, if it pours rain or a venue is closed, tap **Delay**. Plan B recalculates **only that single disrupted hour**, suggesting 3 nearby dry indoor backups while keeping your booked flights and hotels 100% locked!
 6. **Fair & Painless Bill Splitting:** Log expenses against daily activities with even or custom splits. The built-in debt equalizer figures out the fewest transfers needed to settle up.
-7. **Group Chat with In-Room @PlanB Concierge:** Friends chat inside the room, share map pins, and can mention `@PlanB` at any time to ask questions (*"@PlanB what time do we leave tomorrow?"*) or summarize long debates into 3 clean bullet points with a one-tap update button.
+7. **Dual-Channel AI (Private 1-on-1 & In-Room Group Chat):** Whether in **Plan Mode** (pre-trip) or **Trip Mode** (on the road), travelers can privately open the dedicated AI Agent (Screen 14) to ask 1-on-1 questions about their trip (*"Where is our hotel check-in?"*, *"How much budget do I have left?"*) without cluttering the group chat, or mention `@PlanB` in the shared team chat (Screen 20/21) when decisions need team visibility or consensus summaries.
 
 #### The Core User Journey:
 `Open Link / Code → Quick 4-Step Preferences → Align Dates & Lowest Budget → Pin Real Spots on Map → AI Drafts Schedule → Chat & @PlanB Consensus → Live Trip Mode (Done / Delay) → 1-Hour Plan B Rescue → Fair Bill Settlement.`
@@ -434,8 +434,8 @@ Plan B is designed as a phone-first Progressive Web App (PWA) with a persistent 
 7. **Screen 12 & 13: Grounded Day-by-Day Itinerary**
    Timeline of sequenced activities (Day 1: `Kek Lok Si Temple 09:00`, `Char Koay Teow lunch 12:30`; Day 2: `Penang Hill 10:00`). Booked accommodations and flights display a green `🔒 Locked Stay` badge.
 
-8. **Screen 14: Trip-Scoped AI Agent (Trip Context Oracle & Itinerary Controller)**
-   A dedicated assistant strictly scoped to this trip. A top context bar shows live parameters (`3 pins · 1/4 prefs · Budget cap: RM 450`). Travelers can ask trip questions (*"What time do we leave tomorrow?"*, *"Who owes money right now?"*) or tap quick chips (`Relax pace`, `Swap Day 2`) to update the schedule.
+8. **Screen 14: Trip-Scoped AI Agent (Private 1-on-1 Oracle & Itinerary Controller)**  
+   Accessible in **both Plan Mode (pre-trip) and Live Trip Mode (on the road)**. A dedicated 1-on-1 assistant strictly scoped to this trip's live parameters (`3 pins · 1/4 prefs · Budget cap: RM 450`). Travelers can privately ask trip-specific questions (*"What time do we leave tomorrow?"*, *"Who owes money right now?"*, *"Is lunch vegetarian-friendly for Jamie?"*) without broadcasting to the group chat, as well as tap quick chips (`Relax pace`, `Swap Day 2`) to adjust the schedule.
 
 9. **Screen 15 & 15b: Money & Balance Equalizer**
    Itemized shared expenses showing `TOTAL SPENT RM 368.50` (`RM 92.13 / person`). Supports **Even Split** (Grab rides) and **Custom Split** (Rooftop drinks, where Riley is set to RM 0). The Balance Equalizer calculates the fewest transfers to settle up with one-tap `Mark Paid`.
@@ -467,7 +467,9 @@ Plan B is designed as a phone-first Progressive Web App (PWA) with a persistent 
 2. **Hidden Wishlist Shield:** Propose a birthday surprise without spoiling it. The AI routes it secretly without naming it to peers.
 3. **The Constrained Gemini Guardrail:** The AI is an optimizer, not an unconstrained writer. If zero places are pinned, it halts immediately instead of inventing fake shops.
 4. **Single-Slot Replanning (The Core Plan B):** When a rainstorm hits, don't rewrite 3 days. Plan B patches only that disrupted hour, protecting all booked hotels and flights.
-5. **In-Room Conversational Concierge (`@PlanB`):** AI lives inside the group chat. Anyone can ask questions or summarize debates into 3 bullet points, freeing the trip leader from being a human telephone.
+5. **Dual-Channel AI Assistance (Private 1-on-1 + In-Room Concierge):** Whether in **Plan Mode** (pre-trip) or **Trip Mode** (on the road), travelers have two dedicated ways to interact with AI:
+   - **Private 1-on-1 Agent (Screen 14):** Open anytime to privately ask trip questions (hotel check-in, personal debts, dietary options) without cluttering the group chat.
+   - **In-Room Concierge (`@PlanB` in Screen 20/21):** Mentioned directly in team chat when decisions require group visibility, agreement, and one-tap schedule updates.
 
 ---
 
