@@ -8,12 +8,12 @@
 - Yap Chun Hoong
 - Yap Shern Yu
 
-**Track:** Lifestyle · Planning an Escape  
-**Problem Statement:** Travel Planner  
-**Submission:** Plan B  
-**Video file / YouTube title:** `We Are The Champions — Plan B — Planning an Escape`  
-**Video Presentation:** [Unlisted Youtube Link]  
-**Presentation Slides:** [Public Link]  
+**Track:** Lifestyle · Planning an Escape
+**Problem Statement:** Travel Planner
+**Submission:** Plan B
+**Video file / YouTube title:** `We Are The Champions — Plan B — Planning an Escape`
+**Video Presentation:** [Unlisted Youtube Link]
+**Presentation Slides:** [Public Link]
 
 ---
 
@@ -311,7 +311,7 @@ flowchart TD
 flowchart TD
   User["Traveler (Member A)"] --> InputDest["Input Wishlist: 'Surprise Beach Villa'"]
   InputDest --> Toggle["Toggle: [ Hide Destination from Group ]"]
-  
+
   Toggle --> ClientUI["Client UI State (Member A)"]
   Toggle --> ServerAPI["Server API: /api/preferences/submit"]
 
@@ -334,7 +334,7 @@ flowchart TD
 ```mermaid
 flowchart TD
   UserAction{"How Traveler Adds Place"}
-  
+
   UserAction -->|Type in Search Bar| SearchInput["Search Query: 'Toh Soon Cafe'"]
   SearchInput --> PhotonAPI["Photon Fuzzy Geocoder API<br/>(OpenStreetMap by Komoot)"]
   PhotonAPI --> AutocompleteList["Dropdown Autocomplete List<br/>Real venues with address & district"]
@@ -408,7 +408,7 @@ flowchart TD
   Log2["Expense 2: RM 100 Tickets<br/>Paid by Sarah · Split 4 ways (RM 25 each)"] --> Ledger
 
   Ledger --> NetCalc["Calculate Net Balance for Each Member:<br/>Net = Total Paid - Fair Share"]
-  
+
   NetCalc --> B1["Alex: Paid RM 60, Share RM 40 ➔ Net: +RM 20"]
   NetCalc --> B2["Sarah: Paid RM 100, Share RM 40 ➔ Net: +RM 60"]
   NetCalc --> B3["Bob: Paid RM 0, Share RM 40 ➔ Net: -RM 40"]
