@@ -48,7 +48,7 @@ Plan B is a phone-first Progressive Web App (PWA) and grounded AI assistant desi
 8. **Single-Slot Replanning (Core Innovation):** Marking a stop as delayed or skipped prompts Gemini to replace *only* that specific time slot using available places, while booked hotel stays and flights remain untouched.
 9. **Itinerary-Tied Debt Ledger:** Expenses are logged directly against specific itinerary stops, automatically generating a minimal-transaction "who owes whom" debt graph.
 10. **Real-Time Team Group Chat with Conversational AI Concierge & Opinion Summarizer:** In-room messaging powered by Supabase Realtime where members can chat, share interactive place cards, receive automatic broadcast alerts for replanned stops, and mention `@PlanB` to query trip parameters, settle debts, or synthesize unstructured debate into a structured consensus briefing with one-tap schedule updates.
-11. **Mobile PWA Interface:** Built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), optimized for quick one-handed mobile interactions.
+11. **Mobile PWA Interface:** Built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · Chat · You`), optimized for quick one-handed mobile interactions.
 
 #### The Core PWA Journey:
 `Register / Login → Create trip or join with code → Individual members fill preferences (with optional hidden destination) & align → Confirm destination → Map pins + Itinerary + AI Agent sequences real pins → Team group chat coordination → Money expense logging (even / custom split) → Live Trip Mode (Done / Delay) → Single-slot Replan.`
@@ -524,7 +524,7 @@ flowchart TD
   S03 --> S16["16 Profile: You<br/>Trip Count & Settings"]
 ```
 
-Bottom navigation tabs (always accessible in PWA): **Trips · Map · Plan · Money · You · Chat**
+Bottom navigation tabs (always accessible in PWA): **Trips · Map · Plan · Money · Chat · You**
 
 ---
 
@@ -711,20 +711,17 @@ Plan B System Topology
 
 ### 2.3 Mentor Consultation
 
-| Date | Mentor | Feedback Received | What Was Changed |
-| :--- | :--- | :--- | :--- |
-| `[Session 1]` | `[Mentor Name]` | *Feedback on scoping, grounding, or feasibility will be recorded here.* | *Corresponding architectural or UI changes.* |
-| `[Session 2]` | `[Mentor Name]` | *Feedback on presentation, user flow, or edge cases will be recorded here.* | *Corresponding refinements made to submission.* |
+
 
 ---
 
 ## 3. Design & Prototype
 
-**UI Prototype:** [ Public Link ]
+**UI Prototype:**
 
 ### Key Screens & User Interactions
 
-Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), giving travelers instant access to every part of their trip on the move.
+Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · Chat · You`), giving travelers instant access to every part of their trip on the move.
 
 1. **Screen 01 & 02: Splash & Authentication**
    Clean cold-start brand screen with the Plan B slogan (*"When Plan A fails, Plan B saves the trip"*). The login screen highlights three core value propositions: **Group trips**, **AI-powered**, and **Split costs**, with instant account sign-up, email login, or Apple/Google sign-in.
@@ -759,7 +756,7 @@ Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-t
 10. **Screen 18 & 19: Live Trip Mode & Mid-Trip Replan**
     On the day of travel, Trip Mode features a prominent `NEXT STOP` card (`Kek Lok Si Temple`) with `Done`, `Delay`, and `Skip` buttons. When a disruption occurs (e.g., `Heavy rain at Air Itam`), the **Mid-Trip Replan** modal recalculates *only* that affected time slot using remaining places in the pool, keeping all booked flights and hotel reservations intact.
 
-11. **Screen 20 & 21: Real-Time Team Group Chat with Conversational AI Concierge & Consensus Summarizer**  
+11. **Screen 20 & 21: Real-Time Team Group Chat with Conversational AI Concierge & Consensus Summarizer**
     An integrated in-room chat (accessible via the `Chat` tab) where members coordinate plans (Jamie pins `Tek Sen`, Sam asks for a relaxed afternoon, Riley shares a budget constraint). Beyond peer-to-peer messaging, the AI agent participates directly in the conversation as an in-room concierge: any traveler can mention `@PlanB` (e.g., *"@PlanB what time is hotel check-out?"*, *"@PlanB who owes Alex money?"*, or *"@PlanB make tomorrow morning more relaxed"*) to receive instant, group-visible answers and schedule diff cards. Crucially, when discussions grow long, members can prompt *"@PlanB summarize our opinions"* to synthesize chat history and member preferences into a structured consensus briefing (agreed stops, pacing desires, and open budget decisions) with a one-tap button to apply consensus directly to the trip itinerary. The chat also receives automatic broadcast notifications whenever a slot is replanned or an expense is logged.
 
 ---
