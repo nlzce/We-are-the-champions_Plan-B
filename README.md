@@ -400,7 +400,9 @@ flowchart TB
 
 ### 2.3 Mentor Consultation
 
-*Notes and key feedback from mentor consultations will be recorded here during development.*
+| Date | Mentor | Feedback Received | What Was Changed |
+| :--- | :--- | :--- | :--- |
+| `2026-09-06` | **Jarod Tan** | • **AI Agent Harness:** Implement a dedicated AI agent harness for evaluation, structured testing, and deterministic execution.<br/>• **Cloudflare Sandbox Hosting:** Consider hosting backend AI services or edge agents within Cloudflare Sandbox / Workers for isolated, high-speed execution.<br/>• **Simpler Documentation with More Diagrams:** Keep documentation straightforward and human-readable, prioritizing visual diagrams and user flows over heavy technical jargon.<br/>• **Distinctive Feature Focus:** Emphasize standout killer features that differentiate Plan B (e.g., surgical 1-hour disruption rescue, secret wishlist shield, lowest-spender budget cap). | — |
 
 ---
 
@@ -434,7 +436,7 @@ Plan B is designed as a phone-first Progressive Web App (PWA) with a persistent 
 7. **Screen 12 & 13: Grounded Day-by-Day Itinerary**
    Timeline of sequenced activities (Day 1: `Kek Lok Si Temple 09:00`, `Char Koay Teow lunch 12:30`; Day 2: `Penang Hill 10:00`). Booked accommodations and flights display a green `🔒 Locked Stay` badge.
 
-8. **Screen 14: Trip-Scoped AI Agent (Private 1-on-1 Oracle & Itinerary Controller)**  
+8. **Screen 14: Trip-Scoped AI Agent (Private 1-on-1 Oracle & Itinerary Controller)**
    Accessible in **both Plan Mode (pre-trip) and Live Trip Mode (on the road)**. A dedicated 1-on-1 assistant strictly scoped to this trip's live parameters (`3 pins · 1/4 prefs · Budget cap: RM 450`). Travelers can privately ask trip-specific questions (*"What time do we leave tomorrow?"*, *"Who owes money right now?"*, *"Is lunch vegetarian-friendly for Jamie?"*) without broadcasting to the group chat, as well as tap quick chips (`Relax pace`, `Swap Day 2`) to adjust the schedule.
 
 9. **Screen 15 & 15b: Money & Balance Equalizer**
