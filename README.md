@@ -1,7 +1,17 @@
 # Plan B by We Are The Champions
 
-**Team:** Tan Poh Zhai, Lee Wai Loong, Yap Chun Hoong, Yap Shern Yu  
+## Team
+**We Are The Champions**
+
+- Tan Poh Zhai
+- Lee Wai Loong
+- Yap Chun Hoong
+- Yap Shern Yu
+
+**Track:** Lifestyle · Planning an Escape  
 **Problem Statement:** Travel Planner  
+**Submission:** Plan B  
+**Video file / YouTube title:** `We Are The Champions — Plan B — Planning an Escape`  
 **Video Presentation:** [Unlisted Youtube Link]  
 **Presentation Slides:** [Public Link]  
 
@@ -826,18 +836,3 @@ To ensure 100% technical feasibility, the scope for the build phase is strictly 
 - ❌ **Mock Demo Seed Data:** No pre-seeded fake users, sample trips, or canned venue reviews; the app operates entirely on user-entered data.
 - ❌ **Nearby Auto-Scrapers:** The app never pulls unverified external restaurant lists; it schedules only venues intentionally added by travelers.
 - ❌ **Dynamic Currency Fare Speculation:** Expense splitting is based on actual logged receipts, not speculative live foreign exchange scrapers.
-
----
-
-## Team
-
-**We Are The Champions**
-
-- Tan Poh Zhai
-- Lee Wai Loong
-- Yap Chun Hoong
-- Yap Shern Yu
-
-*Track: Lifestyle · Planning an Escape*  
-*Submission: Plan B*  
-*Video file / YouTube title: `We Are The Champions — Plan B — Planning an Escape`*
