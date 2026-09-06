@@ -47,7 +47,7 @@ Plan B is a phone-first Progressive Web App (PWA) and grounded AI assistant desi
 7. **Dual Operating Modes:** Clear separation between **Plan Mode** (pre-trip alignment & schedule generation) and **Trip Mode** (live on-the-ground tracking & next-stop countdowns).
 8. **Single-Slot Replanning (Core Innovation):** Marking a stop as delayed or skipped prompts Gemini to replace *only* that specific time slot using available places, while booked hotel stays and flights remain untouched.
 9. **Itinerary-Tied Debt Ledger:** Expenses are logged directly against specific itinerary stops, automatically generating a minimal-transaction "who owes whom" debt graph.
-10. **Real-Time Team Group Chat with Conversational AI Concierge:** In-room messaging powered by Supabase Realtime where members can chat, share interactive place cards, receive automatic broadcast alerts for replanned stops, and mention `@PlanB` to query trip parameters, settle debts, or adjust schedules collaboratively.
+10. **Real-Time Team Group Chat with Conversational AI Concierge & Opinion Summarizer:** In-room messaging powered by Supabase Realtime where members can chat, share interactive place cards, receive automatic broadcast alerts for replanned stops, and mention `@PlanB` to query trip parameters, settle debts, or synthesize unstructured debate into a structured consensus briefing with one-tap schedule updates.
 11. **Mobile PWA Interface:** Built as a phone-first Progressive Web App (PWA) with a persistent 6-tab bottom navigation bar (`Trips · Map · Plan · Money · You · Chat`), optimized for quick one-handed mobile interactions.
 
 #### The Core PWA Journey:
@@ -143,7 +143,7 @@ flowchart LR
       UC03(["UC03: Create / View Trip Room<br/>(Allowed to be empty initially)"]):::usecase
       UC04(["UC04: Join via Share Link<br/>(No prior friending required)"]):::usecase
       UC05(["UC05: Invite from Friends List"]):::usecase
-      UC18(["UC18: Real-time Team Group Chat<br/>(Member chat, place cards, live alerts)"]):::usecase
+      UC18(["UC18: Team Chat & @PlanB Concierge<br/>(Chat, place cards, opinion & consensus summary)"]):::usecase
     end
 
     subgraph UC_Prefs["3. Preferences & Display Map"]
@@ -194,6 +194,7 @@ flowchart LR
   UC12 --- Gemini
   UC14 -.->|triggers| UC15
   UC15 --- Gemini
+  UC18 -.->|mentions @PlanB| Gemini
 ```
 
 | Use Case ID | Name | Actor(s) | Preconditions & Business Rules |
@@ -215,7 +216,7 @@ flowchart LR
 | **UC15** | Replan Single Slot | Gemini Agent | Rewrites only the affected time block using remaining valid place IDs. Locked stays and flights remain fixed. |
 | **UC16** | Log Itemized Expense | Traveler | Logs actual spend tied directly to an itinerary item with even or custom splitting. |
 | **UC17** | Settle Who-Owes-Whom | Traveler | Computes debt graph and minimal transfers via Balance Equalizer without dynamic ticket lookup. |
-| **UC18** | Team Group Chat | Traveler | Real-time chat powered by Supabase Realtime; share place cards, discuss plans, and receive live system disruption alerts. |
+| **UC18** | Team Chat & @PlanB Concierge | Traveler & Gemini Agent | Real-time in-room chat via Supabase Realtime; share place cards, receive live alerts, and invoke @PlanB to summarize group chat opinions, extract consensus, and query trip state. |
 
 ---
 
@@ -244,6 +245,8 @@ flowchart TD
     MarkPublic --> AddPlace
 
     AddPlace --> CheckAlign["Review Group Alignment Dashboard<br/>(Alex, Jamie, Sam, Riley)"]
+    CheckAlign --> ChatDebate["Team Group Chat Discussion<br/>(Coordinate stops, pace & budgets)"]
+    ChatDebate --> MentionBot["Invoke '@PlanB summarize opinions'<br/>(Extract consensus & conflicts)"]
   end
 
   subgraph SYSTEM["⚙️ Plan B System Engine"]
@@ -254,10 +257,14 @@ flowchart TD
   end
 
   subgraph GEMINI["🤖 Trip-Scoped Gemini Agent"]
+    MentionBot --> ExtractConsensus["Extract Chat Consensus & Opinions:<br/>- Agreed stops (Tek Sen dinner)<br/>- Pace desires (Sam's relaxed Day 2)<br/>- Open items (Riley budget check)"]
+    ExtractConsensus --> PostSummary["Broadcast Consensus Card to Room<br/>(One-tap apply to itinerary)"]
+    PostSummary -.-> DestConfirm
+
     ValidatePlaces -->|No| Halt["STOP SCHEDULING<br/>(Zero fake venues or prices invented.<br/>Prompts members to add places)"]
     Halt -.-> AddPlace
 
-    ValidatePlaces -->|Yes| IngestData["Ingest Trip Data Server-Side:<br/>- Allowed place IDs<br/>- Hidden destination (Secretly)<br/>- Group budget cap & Pace"]
+    ValidatePlaces -->|Yes| IngestData["Ingest Trip Data Server-Side:<br/>- Allowed place IDs<br/>- Hidden destination (Secretly)<br/>- Group budget cap & Pace<br/>- Applied consensus agreements"]
     IngestData --> ScheduleDays["Generate Day-by-Day Itinerary<br/>(Restricted to existing place IDs;<br/>NEVER reveals hidden destination name)"]
   end
 
@@ -432,8 +439,8 @@ flowchart TD
 
 ---
 
-##### Function 7: Real-Time Team Group Chat & Broadcast Feed
-**Description:** Powers intra-room communication via Supabase Realtime websocket channels. Unifies human chat messages with automatic system broadcast alerts whenever an itinerary slot is replanned or an expense is recorded.
+##### Function 7: Real-Time Team Group Chat with In-Room AI Concierge & Consensus Summarizer
+**Description:** Powers intra-room communication via Supabase Realtime websocket channels. Combines peer-to-peer messaging, place card sharing, and automated broadcast alerts with an in-room Gemini concierge (`@PlanB`). When invoked, the AI analyzes conversation history and member preferences to extract a structured consensus summary (resolving pacing or dining debates) and renders an actionable schedule diff card directly into the chat feed.
 
 ```mermaid
 flowchart TD
@@ -452,24 +459,35 @@ flowchart TD
     HumanMsg["Jamie: 'I pinned Tek Sen on the map!'"]
     SamMsg["Sam: 'Can we keep Day 2 afternoon relaxed?'"]
     RileyMsg["Riley: 'My budget cap is RM 450/pax'"]
-    ConsensusMsg["Alex: 'Let\'s push the museum to Day 3'"]
+    MentionMsg["Alex: '@PlanB summarize our opinions'"]
     ReplanAlert["⚡ System Alert: 'Kek Lok Si delayed due to rain; replanned'"]
     SpendAlert["💵 System Alert: 'Alex logged RM 240 Rooftop drinks'"]
+  end
+
+  subgraph AI_CONCIERGE["🤖 Plan B In-Room AI Concierge"]
+    DetectMention{"Message contains<br/>@PlanB mention?"}
+    SummarizeChat["Analyze Chat History & Prefs:<br/>1. Consensus: Tek Sen & relaxed afternoon<br/>2. Open conflict: Day 2 dinner budget<br/>3. Generate structured diff card"]
+    ReplyBroadcast["Broadcast AI Consensus Card to Room"]
   end
 
   HumanMsg --> Broadcaster
   SamMsg --> Broadcaster
   RileyMsg --> Broadcaster
-  ConsensusMsg --> Broadcaster
+  MentionMsg --> Broadcaster
   ReplanAlert --> Broadcaster
   SpendAlert --> Broadcaster
+
+  Broadcaster --> DetectMention
+  DetectMention -->|Yes: @PlanB| SummarizeChat
+  SummarizeChat --> ReplyBroadcast
+  ReplyBroadcast --> Broadcaster
 
   Broadcaster <--> ClientA
   Broadcaster <--> ClientB
   Broadcaster <--> ClientC
   Broadcaster <--> ClientD
 
-  ClientA --> ChatUI["Team Group Chat Tab:<br/>- Text bubbles with timestamps<br/>- Interactive place cards with map links<br/>- System event notice pills"]
+  ClientA --> ChatUI["Team Group Chat Tab:<br/>- Text bubbles with timestamps<br/>- Interactive place cards with map links<br/>- System event notice pills<br/>- AI Consensus Summary Diff Cards"]
   ClientB --> ChatUI
   ClientC --> ChatUI
   ClientD --> ChatUI
@@ -492,7 +510,8 @@ flowchart TD
   DestCheck -->|No| S04
   DestCheck -->|Yes| S10["10 Trip Home: Plan<br/>4 Entry Cards"]
   S10 --> S11["11 Map<br/>Add & Pin Real Venues"]
-  S10 --> S20_21["20-21 Group Chat<br/>Coordinate & Share Pins"]
+  S10 --> S20_21["20-21 Group Chat<br/>Coordinate, @PlanB Consensus & Pins"]
+  S20_21 -.->|Apply Consensus Diff| S14
   S11 --> PlaceCheck{"Places in Pool > 0?"}
   PlaceCheck -->|No| S11
   PlaceCheck -->|Yes| S14["14 AI Agent<br/>Gemini Sequences Places"]
@@ -740,8 +759,8 @@ Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-t
 10. **Screen 18 & 19: Live Trip Mode & Mid-Trip Replan**
     On the day of travel, Trip Mode features a prominent `NEXT STOP` card (`Kek Lok Si Temple`) with `Done`, `Delay`, and `Skip` buttons. When a disruption occurs (e.g., `Heavy rain at Air Itam`), the **Mid-Trip Replan** modal recalculates *only* that affected time slot using remaining places in the pool, keeping all booked flights and hotel reservations intact.
 
-11. **Screen 20 & 21: Real-Time Team Group Chat with Conversational AI Concierge**
-    An integrated in-room chat (accessible via the `Chat` tab) where members coordinate plans (Jamie pins `Tek Sen`, Sam asks for a relaxed afternoon, Riley shares a budget constraint). Beyond peer-to-peer messaging, the AI agent participates directly in the conversation as an in-room concierge: any traveler can mention `@PlanB` (e.g., *"@PlanB what time is hotel check-out?"*, *"@PlanB who owes Alex money?"*, or *"@PlanB make tomorrow morning more relaxed"*) to receive instant, group-visible answers and schedule diff cards. The chat also receives automatic broadcast notifications whenever a slot is replanned or an expense is logged.
+11. **Screen 20 & 21: Real-Time Team Group Chat with Conversational AI Concierge & Consensus Summarizer**  
+    An integrated in-room chat (accessible via the `Chat` tab) where members coordinate plans (Jamie pins `Tek Sen`, Sam asks for a relaxed afternoon, Riley shares a budget constraint). Beyond peer-to-peer messaging, the AI agent participates directly in the conversation as an in-room concierge: any traveler can mention `@PlanB` (e.g., *"@PlanB what time is hotel check-out?"*, *"@PlanB who owes Alex money?"*, or *"@PlanB make tomorrow morning more relaxed"*) to receive instant, group-visible answers and schedule diff cards. Crucially, when discussions grow long, members can prompt *"@PlanB summarize our opinions"* to synthesize chat history and member preferences into a structured consensus briefing (agreed stops, pacing desires, and open budget decisions) with a one-tap button to apply consensus directly to the trip itinerary. The chat also receives automatic broadcast notifications whenever a slot is replanned or an expense is logged.
 
 ---
 
@@ -762,7 +781,7 @@ Plan B is built as a phone-first Progressive Web App (PWA) with a persistent 6-t
 2. **Hidden Destination Privacy Shield:** Solves peer friction when planning surprises or sensitive destinations. A member can propose a destination without exposing it on the shared map; Gemini factors it in secretly while being strictly forbidden from naming it.
 3. **The Constrained Gemini Guardrail:** The AI is not an open-ended writer; it is an itinerary optimizer restricted to an allow-list of member place IDs. If zero places exist, it immediately halts. It is architecturally prevented from inventing fake restaurants or prices.
 4. **Single-Slot Replanning:** When travel disruptions happen, travelers do not need to rewrite the entire trip. Plan B isolates the single broken hour, evaluates candidate replacements from the existing place pool, and patches only that slot—keeping booked flights and hotel reservations permanently locked.
-5. **In-Room Conversational AI Concierge (`@PlanB`):** In addition to the dedicated Agent workbench (Screen 14), the AI joins the group chat directly. Members can mention `@PlanB` to query shared parameters, settle debts, or trigger consensus schedule diffs, liberating the trip host from answering repetitive logistics questions.
+5. **In-Room Conversational AI Concierge (`@PlanB`) & Consensus Summarizer:** In addition to the dedicated Agent workbench (Screen 14), the AI joins the group chat directly. Members can mention `@PlanB` to query shared parameters, settle debts, or synthesize unstructured debate into a structured consensus summary (resolving conflicting pacing or dining desires into one-tap schedule diffs), liberating the trip host from answering repetitive logistics questions or manually reading 100+ chat messages.
 
 ---
 
