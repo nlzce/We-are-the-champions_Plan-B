@@ -45,6 +45,40 @@ College students, young working adults, and small friend groups (2–6 people or
 
 ---
 
+### System Topology Mindmap
+
+A high-level visual mindmap capturing the complete Plan B system topology across its 8 structural pillars:
+
+```mermaid
+flowchart LR
+  Root(["<b>🗺️ Plan B PWA</b><br/><i>When Plan A fails, Plan B saves the trip</i>"])
+
+  Root --> U["<b>1. Users & Collaboration</b><br/>• College students & small friend groups<br/>• 6-digit room code & instant link join<br/>• Phone-first PWA (no app store friction)"]
+  Root --> P["<b>2. Upfront Preference Gathering</b><br/>• 4-step wizard (dates, budget, pace)<br/>• Group ceiling = min(individual caps)<br/>• 🔒 Secret wishlist privacy shield"]
+  Root --> M["<b>3. Real Map Engine</b><br/>• Leaflet + OpenStreetMap canvas<br/>• Photon fast fuzzy autocomplete<br/>• Strictly pinned places; zero fake shops"]
+  Root --> A["<b>4. Dual-Channel AI Agent</b><br/>• Constrained Gemini (0-place hard halt)<br/>• Private 1-on-1 oracle (Screen 14)<br/>• In-room group concierge @PlanB (Screen 20/21)"]
+  Root --> D["<b>5. Dual Operating Modes</b><br/>• Plan Mode: Align dates & itinerary<br/>• Live Trip Mode: Next-stop countdown<br/>• 1-hour surgical delay rescue (locked stays safe)"]
+  Root --> B["<b>6. Fair Money Ledger</b><br/>• Itemized spend against itinerary activities<br/>• Even & custom splits (e.g. Riley RM 0)<br/>• Graph debt minimization with 1-tap Mark Paid"]
+  Root --> S["<b>7. Mobile PWA & Screens</b><br/>• 390px mobile layout with 6 bottom tabs<br/>• Trips · Map · Plan · Money · Chat · You<br/>• 21 high-fidelity design screens"]
+  Root --> X["<b>8. Explicit Anti-Features</b><br/>• No seeded fake demo data<br/>• No brittle booking checkout APIs<br/>• No unverified nearby venue scraping"]
+```
+
+#### Mindmap Pillar Summary
+
+```text
+Plan B System Topology
+├── 1. Users & Collaboration: Students & friends | Solo or group | Link join (no friending) | Clean auth
+├── 2. Upfront Preferences: 4-step wizard | Hidden destination (no map pin, Gemini reads privately)
+├── 3. Grounded Map Engine: Leaflet + OSM | Photon fuzzy search | Real pinned places (no fake shops)
+├── 4. Dual-Channel AI: Trip-scoped | Private 1-on-1 (Screen 14) | Group chat @PlanB (Screen 20/21) | Halt on 0 places
+├── 5. Dual Operating Modes: Plan Mode (align/schedule) | Trip Mode (next stop, delay flag, single-slot replan, stay lock)
+├── 6. Fair Money Ledger: Itemized spend | Debt graph who-owes-whom | Custom splits (e.g. RM 0 drinks)
+├── 7. PWA Mobile Architecture: 390px layout | 6 bottom tabs (Trips · Map · Plan · Money · Chat · You) | 21 screens
+└── 8. Explicit Anti-Features: No seed users/trips | No booking checkout APIs | No auto venue scraping
+```
+
+---
+
 ## 2. Ideation & Process
 
 ### 2.1 Ideas We Considered
