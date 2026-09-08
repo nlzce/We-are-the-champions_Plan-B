@@ -783,58 +783,58 @@ flowchart TD
     RTClient["Realtime WebSocket Client<br/>(Live Chat & Disruption Broadcast)"]
   end
 
-  subgraph EDGE["Cloudflare Edge Runtime (Pages & Workers)"]
-    AuthRoute["/api/auth<br/>Session & Identity"]
-    ExtractRoute["/api/agent/extract<br/>Photo & Voice Scanner (Zero Forms)"]
-    AgentRoute["/api/agent/negotiate<br/>Mastra Multi-Agent Orchestrator"]
-    ReplanRoute["/api/agent/replan<br/>1-Hour Delay Rescue Engine"]
-    GeoRoute["Photon Geocoding Proxy<br/>(Fuzzy Search Autocomplete)"]
-    DebtRoute["/api/money/settle<br/>Who-Owes-Who Debt Simplifier"]
+  subgraph EDGE["Cloudflare Edge Services (Pages & Workers)"]
+    AuthService["Account & Login Service<br/>Profile & Session Management"]
+    IntakeService["Photo & Voice Scanner<br/>Pulls Dates, Budget & Places"]
+    AgentService["Agent Room Coordinator<br/>Multi-Agent Negotiation"]
+    ReplanService["1-Hour Delay Rescue<br/>Patches Broken Hour with Backups"]
+    SearchService["Map Search Service<br/>Instant Place Autocomplete"]
+    DebtService["Bill Splitter<br/>Who-Owes-Who Debt Settlement"]
   end
 
-  subgraph MASTRA["Mastra Multi-Agent Engine Layer (@mastra/core)"]
-    ExtractAgent["Conversational Extractor Agent<br/>(Natural Chat & Screenshot Intake)"]
-    PersonalAgents["Personal Agents (x4)<br/>(Dedicated Agent per Member)"]
-    AdminAgent["👑 Admin Agent (Master Arbiter)<br/>(Evaluates Proposals & Issues Final Rulings)"]
-    CoordAgent["Coordinator Agent<br/>(0-Place Halt & Allow-List Sequencer)"]
-    EvalHarness["Mastra Evaluation Harness<br/>(Automated Guardrail & Regression Tests)"]
+  subgraph MASTRA["Mastra Multi-Agent Layer (@mastra/core)"]
+    ExtractAgent["Scanner Agent<br/>(Turns Voice, Chat & Photos into Cards)"]
+    PersonalAgents["Personal Agents (x4)<br/>(1 Helper per Friend: Budget & Pace)"]
+    AdminAgent["👑 Admin Agent (The Arbiter)<br/>(Balances Group Dates, Budget & Schedule)"]
+    CoordAgent["Coordinator Agent<br/>(Safety Stop & Real Places Sequencer)"]
+    EvalHarness["Test Harness<br/>(Automated Safety & Accuracy Checks)"]
   end
 
   subgraph STORAGE["Cloudflare Edge Storage Layer"]
-    D1[(Cloudflare D1 SQL Database<br/>Distributed Serverless Edge Storage)]
+    D1[(Cloudflare D1 SQL Database<br/>Fast Serverless Edge Database)]
   end
 
-  subgraph EXTERNAL["AI Inference & Geocoding Services"]
-    LLM["LLM Inference Engine<br/>(Cloudflare Workers AI / Google Gemini)"]
-    PhotonAPI["Photon Geocoder<br/>(OpenStreetMap by Komoot)"]
+  subgraph EXTERNAL["AI & Map Services"]
+    LLM["AI Engine<br/>Text, Voice & Image Processing"]
+    MapEngine["Map & Location Engine<br/>Place Search & Map Rendering"]
   end
 
-  UI --> AuthRoute
-  UI --> ExtractRoute
-  UI --> AgentRoute
-  UI --> ReplanRoute
-  UI --> DebtRoute
-  UI --> GeoRoute
+  UI --> AuthService
+  UI --> IntakeService
+  UI --> AgentService
+  UI --> ReplanService
+  UI --> DebtService
+  UI --> SearchService
   UI --> MapClient
   UI <--> RTClient
 
-  ExtractRoute --> ExtractAgent
-  AgentRoute --> PersonalAgents
+  IntakeService --> ExtractAgent
+  AgentService --> PersonalAgents
   PersonalAgents <--> AdminAgent
   AdminAgent --> CoordAgent
-  ReplanRoute --> CoordAgent
+  ReplanService --> CoordAgent
   CoordAgent <--> EvalHarness
 
   ExtractAgent --> LLM
   PersonalAgents --> LLM
   AdminAgent --> LLM
   CoordAgent --> LLM
-  GeoRoute --> PhotonAPI
+  SearchService --> MapEngine
 
-  CoordAgent -.->|Strict ID Verification| D1
-  ReplanRoute -.->|Preserve Locked Stays| D1
-  AuthRoute --> D1
-  DebtRoute --> D1
+  CoordAgent -.->|Save Verified Stops| D1
+  ReplanService -.->|Keep Stays Locked| D1
+  AuthService --> D1
+  DebtService --> D1
 ```
 
 ---
