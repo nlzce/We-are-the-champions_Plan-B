@@ -48,7 +48,7 @@ flowchart LR
     N1["1 Shared Mobile Space<br/>(Scan dynamic QR code to join in 2s)"]
     N2["Automatic Budget Protection<br/>(Ceiling strictly locked to lowest spender)"]
     N3["Real OpenStreetMap Pins<br/>(AI only sequences spots you actually added)"]
-    N4["1-Hour Surgical Rescue<br/>(Patches rain delay; hotels/flights stay locked)"]
+    N4["1-Hour Surgical Rescue<br/>(Patches rain delay, hotels/flights stay locked)"]
     N1 --> N2 --> N3 --> N4
   end
 
@@ -63,7 +63,6 @@ flowchart LR
 5. **Real Map Spots, Zero Fake Shops:** Uses open-source OpenStreetMap with fast Photon search. The AI only arranges places that you and your friends actually pinned on the map. If you haven't pinned any places yet, the AI stops immediately instead of making up fake cafes or closed restaurants.
 6. **The Plan B Rescue (Our Core Twist):** If it pours rain or an attraction is closed during the trip, just tap **Delay**. The AI fixes **only that ruined 1 hour** by finding 3 dry indoor backup spots nearby—while keeping your booked flights and hotels 100% untouched!
 7. **Easy Bill Splitting Without Math:** Never fill out manual accounting forms. Just tell your AI agent what you spent via voice note, text, or a photo of your receipt. The Money tab directly shows simple cards of who owes whom, with a 1-tap "Mark Paid" button.
-8. **Two Ways to Talk to AI:** Talk privately with your Personal Agent (Screen 14) without spamming the group chat, or type `@PlanB` in the group room (Screen 20/21) to get quick answers and turn long debates into a 1-tap agreement card.
 8. **Two Ways to Talk to AI:** Talk privately with your Personal Agent without spamming the group chat, or type `@PlanB` in the group room to get quick answers and turn long debates into a 1-tap agreement card.
 9. **Fast Cloudflare Speed & Flexible AI:** Hosted entirely on **Cloudflare** (Pages, Workers, and **Cloudflare D1** serverless SQL database) so everything loads instantly on your phone. You can run it with 100% free **Cloudflare Workers AI** or switch to **Google Gemini 2.5 Flash** for heavy photo scanning.
 
@@ -83,11 +82,10 @@ flowchart LR
   Root --> U["<b>1. Friends & Rooms</b><br/>• Students & friend groups<br/>• Scan QR code or tap link to join<br/>• Works right in phone browser (PWA)"]
   Root --> P["<b>2. Easy Intake (No Forms)</b><br/>• Drop screenshots (Xiaohongshu/IG)<br/>• Send voice notes & quick chats<br/>• AI turns them into trip cards"]
   Root --> A["<b>3. Mastra Multi-Agent Engine</b><br/>• Personal AI helper for each friend<br/>• Admin Agent arbiter for group decisions<br/>• Automated safety test checks"]
-  Root --> M["<b>4. Real Map Engine</b><br/>• OpenStreetMap + Leaflet canvas<br/>• Fast search autocomplete<br/>• Only real pins; stops if 0 places"]
+  Root --> M["<b>4. Real Map Engine</b><br/>• OpenStreetMap + Leaflet canvas<br/>• Fast search autocomplete<br/>• Only real pins, stops if 0 places"]
   Root --> D["<b>5. Planning & Live Trip Mode</b><br/>• Plan Mode: Pick dates & arrange stops<br/>• Trip Mode: Next stop countdown<br/>• 1-hour quick fix if it rains"]
   Root --> B["<b>6. Fair Money Split</b><br/>• Auto-logs expenses from receipts<br/>• Custom splits (e.g. non-drinkers pay $0)<br/>• Shows who owes who with 1-tap Pay"]
-  Root --> S["<b>7. Private & Group AI Chat</b><br/>• Private 1-on-1 helper (Screen 14)<br/>• Group chat concierge @PlanB (Screen 20/21)<br/>• 22 clean mobile screens"]
-  Root --> S["<b>7. Private & Group AI Chat</b><br/>• Private 1-on-1 helper<br/>• Group chat concierge @PlanB<br/>• Mobile-friendly 6-tab PWA"]
+  Root --> S["<b>7. Private & Group AI Chat</b><br/>• Private 1-on-1 helper<br/>• Group chat concierge @PlanB<br/>• Mobile-first 6-tab PWA"]
   Root --> C["<b>8. Cloudflare Edge Stack</b><br/>• Cloudflare Pages & Workers hosting<br/>• Cloudflare D1 SQL database<br/>• Flexible AI: Workers AI OR Gemini"]
 ```
 
@@ -101,7 +99,6 @@ Plan B System Topology
 ├── 4. Real Map Engine: Leaflet + OpenStreetMap | Fast search | Real pinned spots only (stops if 0 places)
 ├── 5. Dual Modes: Plan Mode (align dates & schedule) | Trip Mode (next stop countdown & 1-hour rain rescue)
 ├── 6. Fair Money Split: Auto-logged spending | Who-owes-who cards | Custom splits (exemptions for non-drinkers)
-├── 7. Dual-Channel AI: Private helper (Screen 14) | Group chat @PlanB (Screen 20/21) | 6-tab PWA (22 screens)
 ├── 7. Dual-Channel AI: Private helper | Group chat concierge @PlanB | Mobile-first 6-tab PWA
 └── 8. Cloudflare Edge Stack: Cloudflare Pages & Workers | Cloudflare D1 SQL | Flexible AI (Workers AI OR Gemini)
 ```
@@ -225,7 +222,7 @@ flowchart TB
   P["THE CORE BREAKDOWN<br/>No single shared truth for people, dates, budget, and daily plans"]
 
   subgraph EFFECTS["What Happens on the Trip"]
-    E1["Arguments & Overspending<br/>Group compromises up; friends with less money feel stressed"]
+    E1["Arguments & Overspending<br/>Group compromises up, friends with less money feel stressed"]
     E2["Awkward Money Chasing<br/>Doing complicated math days after getting home"]
     E3["Fake & Closed Places<br/>Itinerary looks nice on paper, but shops are closed in real life"]
     E4["One Rainstorm Destroys the Day<br/>A single delay ruins the whole weekend because there is no backup"]
@@ -247,7 +244,7 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  Step1["1. Quick Invite<br/>Host shows dynamic<br/>QR code or link"] --> Step2["2. Easy Intake<br/>Chat with your AI helper (no forms);<br/>picks dates, budget & pace"]
+  Step1["1. Quick Invite<br/>Host shows dynamic<br/>QR code or link"] --> Step2["2. Easy Intake<br/>Chat with your AI helper (no forms),<br/>picks dates, budget & pace"]
 
   Step2 --> Step3["3. Admin Ruling<br/>Finds common dates & caps<br/>budget to lowest friend's limit"]
 
@@ -255,13 +252,13 @@ flowchart LR
 
   Step4 --> Step5["5. AI Drafts Schedule<br/>Arranges real pinned spots<br/>by travel pace under budget cap"]
 
-  Step5 --> Step6["6. Chat & Concierge<br/>Talk in room; tag @PlanB<br/>to turn debates into 1-tap updates"]
+  Step5 --> Step6["6. Chat & Concierge<br/>Talk in room, tag @PlanB<br/>to turn debates into 1-tap updates"]
 
   Step6 --> Step7["7. Live Trip Mode<br/>On the road: Next stop countdown,<br/>1-tap 'Done' or 'Delay'"]
 
-  Step7 --> Step8["8. 1-Hour Rain Rescue<br/>Rain hits? AI patches that 1 hour;<br/>hotels & flights stay 100% locked"]
+  Step7 --> Step8["8. 1-Hour Rain Rescue<br/>Rain hits? AI patches that 1 hour,<br/>hotels & flights stay 100% locked"]
 
-  Step8 --> Step9["9. Easy Bill Split<br/>Log bills anytime; see who<br/>owes whom in fewest payments"]
+  Step8 --> Step9["9. Easy Bill Split<br/>Log bills anytime, see who<br/>owes whom in fewest payments"]
 ```
 
 ---
@@ -273,7 +270,7 @@ flowchart LR
 flowchart TD
   subgraph THE_GANG["👥 Travel Group Friends"]
     Start(["Start Planning"]) --> Join["Join via QR Code Scan or Link"]
-    Join --> ChatIntake["Chat with Personal AI Helper<br/>(Voice, text, or drop screenshots; zero forms)"]
+    Join --> ChatIntake["Chat with Personal AI Helper<br/>(Voice, text, or drop screenshots, zero forms)"]
     SecretChoice{"Planning a surprise?"}
     ChatIntake --> SecretChoice
     SecretChoice -->|"Yes: Birthday / Proposal"| HideSpot["Turn on 'Hide from group'<br/>(Kept hidden on friends' screens)"]
@@ -360,7 +357,7 @@ flowchart TD
 
   Switch --> ServerAI["Mastra AI Engine"]
   ServerAI --> SafeInstruction["System Rule:<br/>'Route this stop into the day, but NEVER reveal its name to the group.'"]
-  SafeInstruction --> DraftRoute["Day Route Created:<br/>Seamless day plan; surprise stays 100% secret!"]
+  SafeInstruction --> DraftRoute["Day Route Created:<br/>Seamless day plan, surprise stays 100% secret!"]
 ```
 
 ---
@@ -460,7 +457,6 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  subgraph THE_CHAT["💬 In-Room Group Chat (Screen 20 & 21)"]
   subgraph THE_CHAT["💬 In-Room Group Chat"]
     M1["Member A: Shares a pinned dining venue"]
     M2["Member B: Requests relaxed afternoon pacing"]
@@ -482,45 +478,20 @@ flowchart TD
   DetectQuery -->|Yes: @PlanB| ParseChat
   ParseChat --> CreateDiff
   CreateDiff --> PostFeed["Broadcast Summary Card directly into Chat Feed!"]
-  PostFeed --> AllSee["All 4 friends see the exact same agreement;<br/>1 tap updates the schedule for everyone!"]
+  PostFeed --> AllSee["All 4 friends see the exact same agreement,<br/>1 tap updates the schedule for everyone!"]
 ```
 
 ---
 
-#### 2.2.5 Screen-by-Screen Walkthrough (Mapped to 22 Figma Screens)
-**The Complete App Flow:** Seamless progression from onboarding to live travel.
 #### 2.2.5 Complete End-to-End User Flow
 **The Complete App Flow:** Seamless progression from room invite to live travel and bill settlement.
 
 ```mermaid
 flowchart TD
-  S01["01 Splash<br/>When Plan A fails..."] --> S02["02 Login / Register<br/>Email or Google/Apple"]
-  S02 --> S03["03 Trips (Empty State)<br/>Create Trip / Scan QR Code"]
-  S03 --> S04["04 Trip Home: Member Roster<br/>Host & Member Readiness Status"]
-  S03 --> S17["17 Invite<br/>Dynamic QR Code & Link"]
-  S04 --> S05_08["05-08 Easy Intake<br/>Chat with Personal Agent (no forms);<br/>Extracts dates, budget, pace & secrets"]
-  S05_08 --> S09["09 Admin Agent Ruling<br/>Admin Agent reviews all 4 friends &<br/>caps budget to lowest friend & common dates"]
-  S09 --> DestCheck{"Admin Agent Confirms Destination?"}
-  DestCheck -->|No| S04
-  DestCheck -->|Yes| S10["10 Trip Home: Plan<br/>4 Entry Cards (Admin Approved)"]
-  S10 --> S11["11 Map<br/>Search & Pin Real Places"]
-  S10 --> S14["14 Personal Agent Console<br/>1-on-1 Chat & Budget Check"]
-  S10 --> S20_21["20-21 Group Chat & Admin Agent @PlanB<br/>Team Chat, Agent Deliberation & Rulings"]
-  S11 --> PlaceCheck{"Places Pinned > 0?"}
-  PlaceCheck -->|No: Halt| S11
-  PlaceCheck -->|Yes| S12_13["12-13 Itinerary<br/>Admin-Sequenced Real Stops"]
-  S20_21 -.->|"Apply Consensus Ruling"| S12_13
-  S14 -.->|"Simulate / Check"| S12_13
-  S12_13 --> S18["18 Trip Mode<br/>NEXT STOP: Active Stop Countdown"]
-  S18 --> DisCheck{"Rain or Delay?"}
-  DisCheck -->|Yes: Delay| S19["19 Mid-Trip Replan<br/>1-Hour Fix; Stays Locked"]
-  S19 --> S18
-  DisCheck -->|No: Settle up| S15["15-15b Money<br/>Zero-Form Ledger & Who-Owes-Who"]
-  S03 --> S16["16 Profile: You<br/>Trip Count & Settings"]
   Login["Welcome & Sign In<br/>Google, Apple or Magic Link"] --> TripsHub["Trips Hub<br/>Create Trip or Scan QR Code"]
   TripsHub --> Invite["Instant Invite<br/>Dynamic QR Code & Share Link"]
   TripsHub --> Roster["Trip Room: Member Roster<br/>Host & Member Readiness Status"]
-  Roster --> EasyIntake["Easy Chat Intake<br/>Chat with Personal AI (no forms);<br/>Extracts dates, budget, pace & secrets"]
+  Roster --> EasyIntake["Easy Chat Intake<br/>Chat with Personal AI (no forms),<br/>Extracts dates, budget, pace & secrets"]
   EasyIntake --> AdminRuling["Admin AI Decision<br/>Finds common free dates &<br/>caps budget to lowest friend (min-cap)"]
   AdminRuling --> DestCheck{"Admin AI Confirms Destination?"}
   DestCheck -->|No| Roster
@@ -535,7 +506,7 @@ flowchart TD
   PersonalAI -.->|"Check & Simulate"| Itinerary
   Itinerary --> LiveTrip["Live Trip Mode<br/>NEXT STOP: Active Countdown"]
   LiveTrip --> DisCheck{"Rain or Delay?"}
-  DisCheck -->|Yes: Delay| Replan["1-Hour Rain Rescue<br/>Indoor backup; stays locked"]
+  DisCheck -->|Yes: Delay| Replan["1-Hour Rain Rescue<br/>Indoor backup, stays locked"]
   Replan --> LiveTrip
   DisCheck -->|No: Settle up| Money["Money & Bills<br/>Zero-Form Ledger & Who-Owes-Who"]
   TripsHub --> Profile["Profile: You<br/>Travel Pace & Dietary Defaults"]
@@ -580,21 +551,12 @@ flowchart TB
 
 ## 3. Design & Prototype
 
-### Key Screens & User Interactions (22 Figma Screens Breakdown)
 ### Mobile Interface & Navigation (Phone-First PWA)
 
-Plan B is built as a phone-friendly web app that fits right in your hand (390px mobile screen). It has 6 handy bottom tabs that stay on screen all the time: `Trips · Map · Plan · Money · Chat · You`.
 Plan B is built as a phone-friendly web app designed for effortless one-handed use on mobile devices (390px viewport). It features **6 persistent bottom navigation tabs** that stay easily accessible at all times:
 
 ```mermaid
 flowchart TD
-  subgraph TABS["📱 6 Bottom Navigation Tabs"]
-    T1["<b>1. Trips</b><br/>Screens 01-04, 17"]
-    T2["<b>2. Map</b><br/>Screen 11"]
-    T3["<b>3. Plan</b><br/>Screens 05-10, 12, 13, 18, 19"]
-    T4["<b>4. Money</b><br/>Screens 15, 15b"]
-    T5["<b>5. Chat</b><br/>Screens 20, 21"]
-    T6["<b>6. You</b><br/>Screens 14, 16"]
   subgraph TABS["📱 6 Persistent Bottom Navigation Tabs"]
     T1["<b>1. Trips</b><br/>My Trips, Create & QR Invites"]
     T2["<b>2. Map</b><br/>OpenStreetMap & Real Pins"]
@@ -604,17 +566,10 @@ flowchart TD
     T6["<b>6. You</b><br/>Profile, Pace & Dietary Rules"]
   end
 
-  subgraph STAGES["🗺️ How You Use the App (22 Screens)"]
-    S1["<b>Stage 1: Join & Invite</b><br/>01 Welcome · 02 Sign In · 03 Trips Home · 17 QR Code Invite"]
-    S2["<b>Stage 2: Chat Naturally (No Forms)</b><br/>04 Member List · 05-08 Personal AI Chat & Photos · 09 Admin Decision"]
-    S3["<b>Stage 3: Map & Real Schedule</b><br/>10 Plan Hub · 11 Real Map (OpenStreetMap) · 12-13 Daily Schedule"]
-    S4["<b>Stage 4: On the Road & Rain Rescue</b><br/>18 Next Stop · 19 1-Hour Rain & Delay Fix"]
-    S5["<b>Stage 5: Split Bills Easily</b><br/>15 Zero-Form Bill List · 15b Who-Owes-Who Cards"]
-    S6["<b>Stage 6: Group Chat & AI Helper</b><br/>14 Private AI Chat · 20 Group Chat · 21 @PlanB Summary"]
   subgraph STAGES["🗺️ Core Experience Modules"]
-    S1["<b>Room Entry & Invites:</b> Instant QR scan or link join; zero app store downloads"]
-    S2["<b>Conversational Intake:</b> Voice memos, chats & screenshots; zero manual forms"]
-    S3["<b>Grounded Route Planning:</b> OpenStreetMap pins; strictly verified stops"]
+    S1["<b>Room Entry & Invites:</b> Instant QR scan or link join, zero app store downloads"]
+    S2["<b>Conversational Intake:</b> Voice memos, chats & screenshots, zero manual forms"]
+    S3["<b>Grounded Route Planning:</b> OpenStreetMap pins, strictly verified stops"]
     S4["<b>Live Trip & 1-Hour Rescue:</b> Next stop countdown & 1-hour indoor rain patch"]
     S5["<b>Effortless Bill Splitting:</b> Voice/photo logging & direct who-owes-who cards"]
     S6["<b>Team Collaboration:</b> Real-time in-room chat with @PlanB consensus cards"]
@@ -629,19 +584,12 @@ flowchart TD
   T6 --> S6
 ```
 
-Here is the complete screen-by-screen breakdown showing **what you see on each screen** and **what it does for you**:
 ### Core Interface Modules & User Experience
 
-#### Screen 01: Welcome (Splash Screen)
-- **What is on this screen:** Plan B logo, slogan (*"When Plan A fails, Plan B saves the trip"*), a big `Get Started` button, a sign-in link if you already have an account, and a warm background.
-- **What it does:** Welcomes you, shows what Plan B is all about, and guides you to sign in or create an account.
 #### 1. Trips Hub & Instant Invites (`Trips` Tab)
 - **Active Trips Overview:** View ongoing and upcoming getaways with clear `Planning` or `Live` status tags, or tap `+ New Trip` to start a new adventure.
 - **Dynamic QR Code Invites:** The host displays a large, clear on-screen QR code or shares an instant link. Friends simply point their phone camera at the screen to join the trip room in 2 seconds—no app store downloads needed.
 
-#### Screen 02: Quick Sign In
-- **What is on this screen:** Easy 1-tap sign-in with Google or Apple, an email magic link option (no password required), and privacy terms.
-- **What it does:** Logs you in smoothly without remembering passwords, saves your profile safely, and keeps you logged in.
 #### 2. Planning & Conversational Intake (`Plan` Tab)
 - **Member Roster & Readiness:** Displays all friends in the room and tracks who has finished sharing their preferences with their Personal AI.
 - **No-Form Intake (Voice, Text & Screenshots):** Tell your Personal AI what you want, send voice memos, or drop screenshots from Xiaohongshu, Instagram, or Google Maps. The AI automatically captures dates, spending limits, travel pace, food restrictions, and secret wishlists.
@@ -649,100 +597,25 @@ Here is the complete screen-by-screen breakdown showing **what you see on each s
 - **Grounded Daily Itinerary:** Step-by-step chronological timeline built strictly from real member-added pins, with green `🔒 Locked` badges on booked accommodations and return flights.
 - **Secret Wishlist Shield:** Special surprise stops (like birthday dinners or proposal spots) are scheduled seamlessly into the route while hiding the venue name from friends' views until arrival.
 
-#### Screen 03: Trips Home (Your Trips Hub)
-- **What is on this screen:** Cards of your upcoming or active trips (destination, dates, and `Planning` or `Live` tags), a big `+ New Trip` button, and a handy `Scan QR Code` camera button to join a friend's trip right away.
-- **What it does:** Your main trip home. Start a new getaway or point your phone camera at a friend's QR code to jump straight into their trip room.
 #### 3. Real Map Canvas (`Map` Tab)
 - **OpenStreetMap & Leaflet Canvas:** Fast, interactive map with search-as-you-type fuzzy autocomplete powered by Photon.
 - **Tap-to-Pin Anywhere:** Search real street addresses or tap directly on the map to drop custom pins. Only real places you actually pinned enter the itinerary pool, eliminating hallucinated or closed shops.
 
-#### Screen 04: Trip Room — Getting on the Same Page (Align Mode & Member List)
-- **What is on this screen:** Trip name, a simple tab switch `[Align | Plan]`, friend profile icons with status tags (`Ready` vs `Waiting for input`), a progress bar showing who's finished chatting with their AI, and an `+ Invite (QR Code)` button.
-- **What it does:** Shows everyone who joined the trip room. The host can see who finished sharing preferences with their Personal AI, and tap to display the invite QR code so more friends can jump in.
 #### 4. Shared Expenses & Settlement (`Money` Tab)
 - **Zero-Form Shared Ledger:** Auto-logs group spending from voice memos, chat notes, or receipt photos sent to the AI, supporting custom split rules (e.g. non-drinkers pay $0).
 - **Direct Who-Owes-Who Settlement:** Clean cards showing the exact calculated payments between debtors and creditors, worked out so friends make the fewest transfers possible, with a 1-tap `[Mark Paid]` button.
 
-#### Screen 05: Chatting With Your AI — Destination Ideas
-- **What is on this screen:** 1-on-1 private chat with your Personal AI Agent, text box, mic button to record voice memos, drop zone for social media screenshots, and preview cards of places you liked.
-- **What it does:** Tell your AI where you want to go or drop screenshots from Xiaohongshu, Instagram, or Google Maps. The AI reads them and pulls out real place ideas automatically—no tedious forms to fill out.
 #### 5. Group Chat & AI Concierge (`Chat` Tab)
 - **Real-Time Group Chat:** Live in-room messaging powered by WebSockets, with interactive venue cards, friend avatars, and automatic trip event notifications.
 - **In-Room Concierge (`@PlanB`):** Tag `@PlanB` in the chat to synthesize long debates into a tidy consensus card that updates the shared itinerary with a single tap.
 
-#### Screen 06: Chatting With Your AI — When Are You Free?
-- **What is on this screen:** Friendly AI chat prompt, interactive calendar chips showing your free dates, a `Flexible (+/- 1 day)` toggle switch, and a clear timeline visual.
-- **What it does:** Understands your dates from plain messages, calendar screenshots, or voice notes (like *"I'm free next weekend"*), and marks when you can travel so the group can find overlapping dates.
 #### 6. Personal AI Console & Profile (`You` Tab)
 - **Private 1-on-1 AI Helper:** Private chat with your dedicated Personal AI. Ask sensitive questions, check food allergies, or log expenses by voice or photo without cluttering the group chat.
 - **Traveler Profile & Preferences:** Stores your personal bio, travel stats, and global defaults (travel pace and dietary restrictions) that automatically pre-populate whenever you join a new trip room.
 
-#### Screen 07: Chatting With Your AI — Budget & Travel Pace
-- **What is on this screen:** AI chat bubbles confirming your budget limits, a private spending badge (kept secret from your friends), simple pace chips (`Easy / Relaxed` vs `Packed / Fast`), and estimated daily cost tags.
-- **What it does:** Saves how much you can spend and how chill or fast you want your days to be. It keeps your budget private so nobody feels judged, while helping the Admin AI protect your wallet.
 #### 7. Live Trip Mode & 1-Hour Plan B Rescue
 - **On-the-Road Dashboard:** Automatically activates during travel days with a pulsing `NEXT STOP` banner, live countdown timer, and quick action controls (`Done`, `Delay`, `Skip`).
 - **1-Hour Rain Rescue (The Plan B Twist):** When sudden rain or delays hit, tapping `Delay` opens the rescue modal. It keeps all booked hotel check-ins and flights 100% locked, while replacing only that disrupted 1-hour slot with 3 dry indoor backup spots from your saved pool.
-
-#### Screen 08: Chatting With Your AI — Food Rules & Secret Wishlists
-- **What is on this screen:** AI cards showing dietary tags (like `Diet: Vegetarian` or `No seafood`), hard deal-breakers (like no early mornings), and a special toggle: `🔒 Hide from group (Surprise / Wishlist)`.
-- **What it does:** Remembers what you can't eat and what you want to avoid. If you have a secret plan (like a birthday cake surprise or a proposal spot), turn on the secret toggle—the AI will work it into the schedule without showing the venue name to your friends.
-
-#### Screen 09: Admin AI Decision Room (Group Alignment)
-- **What is on this screen:** The best overlapping trip dates, the locked group budget cap (set to match the friend with the least budget), a checklist of everyone's dietary needs, and the Admin AI's final decision summary.
-- **What it does:** Acts as the unbiased group judge. It settles any schedule conflicts, caps the trip budget so the friend with the tightest wallet never feels pressured, and unlocks trip planning once dates and places are locked.
-
-#### Screen 10: Trip Home — Plan Mode (4 Main Hub Cards)
-- **What is on this screen:** Trip banner with destination, confirmed dates, and budget cap; tab switch set to `[Plan]`; and 4 large quick-access cards: `1. Schedule (Itinerary)`, `2. Real Map (OpenStreetMap)`, `3. Personal AI (1-on-1 Chat)`, and `4. Money & Bills (Who-Owes-Who)`.
-- **What it does:** Your main command centre once the trip is planned. Jump straight to your daily schedule, explore the map, talk privately to your AI, or check and settle bills.
-
-#### Screen 11: Real Map Canvas (OpenStreetMap + Search)
-- **What is on this screen:** Fullscreen interactive map (Leaflet + OpenStreetMap), a fast search bar with instant type-ahead suggestions, numbered map pins, tap-anywhere pin dropper, and a slide-up tray with an `+ Add to Trip` button.
-- **What it does:** Search real spots or tap directly on the map to pin places you want to visit. Only real places you actually pinned go into your schedule—no fake or closed spots invented by AI, and no expensive map fees.
-
-#### Screen 12: Daily Schedule (Day 1)
-- **What is on this screen:** Day tabs (Day 1, Day 2...), step-by-step activity cards with arrival times, stop names, estimated costs, travel time badges, and green `🔒 Locked` badges on booked hotels and flights.
-- **What it does:** Displays the daily plan organized cleanly by the Admin AI. It uses only real pins from the group, fits everyone's preferred pace, and stays strictly within the group budget.
-
-#### Screen 13: Daily Schedule (Day 2 & Secret Surprise Stops)
-- **What is on this screen:** Step-by-step timeline cards, plus a special card shown as `🔒 Surprise Activity (Private Wishlist)` with hidden name and details for your friends (fully visible only to you).
-- **What it does:** Proves that the AI can seamlessly schedule surprise stops into the route while hiding the secret venue details from other travelers until you arrive.
-
-#### Screen 14: Personal AI Console (Private Chat & Wallet Guard)
-- **What is on this screen:** Private 1-on-1 chat with your own AI helper, quick-question buttons (*"What time is hotel check-in?"*, *"Who owes money right now?"*, *"Log an expense"*), your personal budget meter, and a draft schedule checker.
-- **What it does:** Your private travel buddy and budget guardian. Ask personal questions, double-check food spots for allergies, or just send a quick voice memo or receipt photo to log an expense instantly without touching any form.
-
-#### Screen 15: Money & Expenses (No-Form Bill List)
-- **What is on this screen:** Total trip spending card at the top, clear list of all expenses auto-read by the AI (what was bought, total price, who paid, who shared), a shortcut button to drop a receipt photo or voice note, and a big button: `View Who Owes What →`.
-- **What it does:** Shows every group purchase clearly. Every bill is logged effortlessly through voice notes, chat messages, or receipt pictures sent to the AI. You never have to fill out complicated forms or calculate percentages yourself.
-
-#### Screen 15b: Who Owes Who (Direct Debt Settlement & 1-Tap Pay)
-- **What is on this screen:** Clean, crystal-clear **Who-Owes-Who cards** showing exact payments between who owes and who gets paid, simple 1-tap `[Mark Paid]` buttons, everyone's net balance, and status tags (`Paid` vs `Pending`).
-- **What it does:** Tells you straight up who needs to pay whom, worked out so you make the fewest transfers possible. No math, no spreadsheets, and no confusion—just see who you owe, transfer the money, and tap `Mark Paid`.
-
-#### Screen 16: Your Profile ("You" Tab)
-- **What is on this screen:** Your avatar and travel bio, trip stats (trips finished, friends traveled with), default travel preferences (your usual pace and dietary rules), and notification toggles.
-- **What it does:** Holds your traveler settings. When you join or start a new trip, your Personal AI already knows your preferences so you never have to re-enter them.
-
-#### Screen 17: Invite Friends (QR Code & Quick Link)
-- **What is on this screen:** A large, clear QR code displayed on screen, a 1-tap `Copy Link` button, instant share options for WhatsApp and Telegram, and a list of friends already in the room.
-- **What it does:** The fastest way to get friends into your trip. Friends standing next to you just scan your phone screen with their phone camera and they're in immediately—no app install required.
-
-#### Screen 18: Live Trip Mode (Active "Next Stop" Countdown)
-- **What is on this screen:** Big on-the-road travel card, bright `NEXT STOP` banner (place name and arrival time), live countdown timer, and 3 clear action buttons: `Done (Arrived)`, `Delay (+30m)`, and `Skip Stop`.
-- **What it does:** Turns on automatically during trip days. Keeps everyone in sync on where to go next, and gives you instant buttons if you run late or want to move on.
-
-#### Screen 19: Mid-Trip Rescue (1-Hour Rain & Delay Fix)
-- **What is on this screen:** Emergency popup triggered by tapping `Delay`, delay reason alert (like bad weather or sudden closure), delay length picker (`+1 Hour Delay`), safe anchor badge (`🔒 Booked hotels & flights 100% Safe`), 3 indoor backup ideas from your saved pins (indoor cafes, museums, covered spots), and an `Apply Plan B Patch` button.
-- **What it does:** The true magic of Plan B: it fixes only that 1 ruined hour with fun indoor backup plans, while keeping your booked hotels and return flights completely locked and safe.
-
-#### Screen 20: Group Chat & Place Sharing
-- **What is on this screen:** Real-time group chat room, interactive venue cards with map pin previews, friend avatars, auto-alerts when someone adds a pin or logs a bill, and an `@PlanB` mention shortcut.
-- **What it does:** Keeps all group chatting in one spot. Friends can share cool spots, agree on meeting times, drop receipt photos, and discuss plans together in real time.
-
-#### Screen 21: Admin AI In Chat (@PlanB Summary Card)
-- **What is on this screen:** Direct reply card from `@PlanB` in the chat, a tidy consensus summary box pulling together what everyone agreed on (dinner choices, rest times, budget checks, and auto-logged bills), and an `Apply to Itinerary` button.
-- **What it does:** Stops group chat arguments and chaos. The Admin AI reads through the back-and-forth messages, summarizes what everyone actually agreed on, and updates the shared trip schedule with a single tap.
 
 ---
 
@@ -762,10 +635,10 @@ flowchart LR
 
   subgraph PB["✅ The Plan B Advantage (Phone-First PWA)"]
     direction TB
-    P1["<b>Data Intake:</b> Drop screenshots & voice notes; zero forms"]
+    P1["<b>Data Intake:</b> Drop screenshots & voice notes, zero forms"]
     P2["<b>Budget:</b> Auto-locks ceiling to lowest spender (min-cap)"]
-    P3["<b>Places:</b> OpenStreetMap; strictly pinned real places"]
-    P4["<b>Delays:</b> 1-hour surgical patch; hotels/flights stay locked"]
+    P3["<b>Places:</b> OpenStreetMap, strictly pinned real places"]
+    P4["<b>Delays:</b> 1-hour surgical patch, hotels/flights stay locked"]
     P5["<b>Bills:</b> Tell AI & directly see who owes who how much"]
     P6["<b>Chat:</b> @PlanB summarizes team consensus in 1 tap"]
   end
