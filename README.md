@@ -1,9 +1,9 @@
-# Plan B by we are the champions
+# Plan B by We are the champions
 
 > **When Plan A fails, Plan B saves the trip.**
 
 **Track:** Lifestyle · Planning an Escape
-**Team:** we are the champions
+**Team:** We are the champions
 **Members:** Tan Poh Zhai, Lee Wai Loong, Yap Chun Hoong, Yap Shern Yu
 
 ---
