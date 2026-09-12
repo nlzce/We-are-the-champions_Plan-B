@@ -2,9 +2,14 @@
 
 > **When Plan A fails, Plan B saves the trip.**
 
-**Track:** Lifestyle · Planning an Escape
+**Problem Statement:** Lifestyle Track· Planning an Escape
 **Team:** We are the champions
 **Members:** Tan Poh Zhai, Lee Wai Loong, Yap Chun Hoong, Yap Shern Yu
+
+### 🔗 Project Deliverables
+- 🎥 **Video Presentation (YouTube):** https://youtu.be/8r1wEetusIk
+- 📊 **Presentation Slides:** https://canva.link/dzkymfwxa2aj21a
+- 🎨 **UI Prototype (Figma):** https://www.figma.com/design/ZMZYmlvroX2sSDJ8xYqYvc/CodeNection-2026_We-are-the-champions_Livestyle-Track---Planning-an-Escape?node-id=0-1&t=x5dtLMP7YvVANoOO-1
 
 ---
 
